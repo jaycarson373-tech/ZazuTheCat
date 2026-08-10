@@ -1,13 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { Test } from "forge-std/Test.sol";
+import { Test, Vm } from "forge-std/Test.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { BuybackVault } from "../src/BuybackVault.sol";
 import { PonsFeeCollector } from "../src/PonsFeeCollector.sol";
 import { MockERC20 } from "./mocks/MockERC20.sol";
 import { MockPonsLaunchLocker } from "./mocks/MockPonsLaunchLocker.sol";
 import { MockRouter } from "./mocks/MockRouter.sol";
+
+contract WrongIntervalVault {
+    MockERC20 public immutable zazuToken;
+    address public immutable feeToken;
+    address public immutable buybackDestination;
+    uint256 public constant minimumInterval = 1 minutes;
+
+    constructor(MockERC20 zazuToken_, address feeToken_, address buybackDestination_) {
+        zazuToken = zazuToken_;
+        feeToken = feeToken_;
+        buybackDestination = buybackDestination_;
+    }
+}
 
 contract PonsFeeCollectorTest is Test {
     address internal constant BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
@@ -27,6 +40,7 @@ contract PonsFeeCollectorTest is Test {
     PonsFeeCollector internal collector;
 
     function setUp() public {
+        vm.warp(30 days);
         weth = new MockERC20("Wrapped Ether", "WETH");
         zazu = new MockERC20("Zazu", "ZAZU");
         router = new MockRouter();
@@ -47,6 +61,8 @@ contract PonsFeeCollectorTest is Test {
         assertEq(address(collector.ponsLocker()), address(ponsLocker));
         assertEq(address(collector.zazuToken()), address(zazu));
         assertEq(address(collector.buybackVault()), address(vault));
+        assertEq(collector.minimumClaimInterval(), 15 minutes);
+        assertEq(collector.lastClaimTime(), block.timestamp);
     }
 
     function testFlushIsPermissionlessAndForwardsBothCreatorFeeAssets() public {
@@ -100,13 +116,14 @@ contract PonsFeeCollectorTest is Test {
     }
 
     function testEmptyFlushIsSafeAndReturnsZero() public {
-        vm.expectEmit(false, false, false, true, address(collector));
-        emit CreatorFeesForwarded(0, 0);
+        vm.recordLogs();
         vm.prank(caller);
         (uint256 forwardedWeth, uint256 forwardedZazu) = collector.flush();
+        Vm.Log[] memory logs = vm.getRecordedLogs();
 
         assertEq(forwardedWeth, 0);
         assertEq(forwardedZazu, 0);
+        assertEq(logs.length, 0);
     }
 
     function testClaimAndFlushCollectsLockerFeesBeforeForwarding() public {
@@ -116,7 +133,9 @@ contract PonsFeeCollectorTest is Test {
         zazu.mint(address(ponsLocker), zazuAmount);
         ponsLocker.setClaimAmounts(wethAmount, zazuAmount);
 
-        vm.prank(caller);
+        _openClaimWindow();
+        uint256 expectedClaimTime = block.timestamp;
+        vm.prank(keeper);
         (uint256 forwardedWeth, uint256 forwardedZazu) = collector.claimAndFlush();
 
         assertEq(ponsLocker.collectCallCount(), 1);
@@ -125,13 +144,15 @@ contract PonsFeeCollectorTest is Test {
         assertEq(vault.totalDeposited(), wethAmount);
         assertEq(vault.totalZazuBurned(), zazuAmount);
         assertEq(zazu.balanceOf(vault.DEFAULT_BURN_ADDRESS()), zazuAmount);
+        assertEq(collector.lastClaimTime(), expectedClaimTime);
     }
 
     function testClaimAndFlushToleratesOnlyNoFeesErrorAndFlushesExistingBalances() public {
         weth.mint(address(collector), 1 ether);
         ponsLocker.setShouldReportNoFees(true);
 
-        vm.prank(caller);
+        _openClaimWindow();
+        vm.prank(keeper);
         (uint256 forwardedWeth, uint256 forwardedZazu) = collector.claimAndFlush();
 
         assertEq(forwardedWeth, 1 ether);
@@ -144,13 +165,91 @@ contract PonsFeeCollectorTest is Test {
         weth.mint(address(collector), 1 ether);
         ponsLocker.setShouldRevert(true);
 
-        vm.prank(caller);
+        _openClaimWindow();
+        vm.prank(keeper);
         vm.expectRevert(MockPonsLaunchLocker.CollectFailed.selector);
         collector.claimAndFlush();
 
         assertEq(weth.balanceOf(address(collector)), 1 ether);
         assertEq(weth.balanceOf(address(vault)), 0);
         assertEq(vault.totalDeposited(), 0);
+    }
+
+    function testClaimAndFlushRejectsNonKeeper() public {
+        uint256 wethAmount = 1 ether;
+        weth.mint(address(ponsLocker), wethAmount);
+        ponsLocker.setClaimAmounts(wethAmount, 0);
+        _openClaimWindow();
+
+        vm.prank(caller);
+        vm.expectRevert(
+            abi.encodeWithSelector(PonsFeeCollector.UnauthorizedKeeper.selector, caller, keeper)
+        );
+        collector.claimAndFlush();
+
+        assertEq(ponsLocker.collectCallCount(), 0);
+        assertEq(weth.balanceOf(address(vault)), 0);
+    }
+
+    function testClaimAndFlushRejectsBeforeFifteenMinuteWindow() public {
+        uint256 configuredAt = collector.lastClaimTime();
+        uint256 expectedNext = configuredAt + collector.minimumClaimInterval();
+        weth.mint(address(ponsLocker), 1 ether);
+        ponsLocker.setClaimAmounts(1 ether, 0);
+
+        vm.warp(expectedNext - 1);
+        vm.prank(keeper);
+        vm.expectRevert(
+            abi.encodeWithSelector(PonsFeeCollector.ClaimIntervalNotElapsed.selector, expectedNext)
+        );
+        collector.claimAndFlush();
+
+        assertEq(collector.lastClaimTime(), configuredAt);
+        assertEq(ponsLocker.collectCallCount(), 0);
+    }
+
+    function testSecondClaimWaitsForNextFifteenMinuteWindow() public {
+        weth.mint(address(ponsLocker), 2 ether);
+        ponsLocker.setClaimAmounts(1 ether, 0);
+        _openClaimWindow();
+
+        vm.prank(keeper);
+        collector.claimAndFlush();
+        uint256 firstClaimTime = collector.lastClaimTime();
+
+        ponsLocker.setClaimAmounts(1 ether, 0);
+        uint256 expectedNext = firstClaimTime + collector.minimumClaimInterval();
+        vm.prank(keeper);
+        vm.expectRevert(
+            abi.encodeWithSelector(PonsFeeCollector.ClaimIntervalNotElapsed.selector, expectedNext)
+        );
+        collector.claimAndFlush();
+        assertEq(ponsLocker.collectCallCount(), 1);
+
+        vm.warp(expectedNext);
+        vm.prank(keeper);
+        collector.claimAndFlush();
+        assertEq(ponsLocker.collectCallCount(), 2);
+        assertEq(collector.lastClaimTime(), expectedNext);
+    }
+
+    function testClaimAuthorizationTracksVaultKeeperRotation() public {
+        address nextKeeper = makeAddr("nextKeeper");
+        vm.prank(owner);
+        vault.setKeeper(nextKeeper);
+        weth.mint(address(ponsLocker), 1 ether);
+        ponsLocker.setClaimAmounts(1 ether, 0);
+        _openClaimWindow();
+
+        vm.prank(keeper);
+        vm.expectRevert(
+            abi.encodeWithSelector(PonsFeeCollector.UnauthorizedKeeper.selector, keeper, nextKeeper)
+        );
+        collector.claimAndFlush();
+
+        vm.prank(nextKeeper);
+        collector.claimAndFlush();
+        assertEq(vault.totalDeposited(), 1 ether);
     }
 
     function testUnconfiguredCollectorCannotFlush() public {
@@ -211,6 +310,19 @@ contract PonsFeeCollectorTest is Test {
         fresh.configure(address(zazu), address(wrongVault));
     }
 
+    function testConfigureRejectsVaultWithDifferentCadence() public {
+        WrongIntervalVault wrongVault = new WrongIntervalVault(zazu, address(weth), BURN_ADDRESS);
+        PonsFeeCollector fresh = new PonsFeeCollector(owner, address(weth), address(ponsLocker));
+
+        vm.prank(owner);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                PonsFeeCollector.VaultIntervalMismatch.selector, 15 minutes, 1 minutes
+            )
+        );
+        fresh.configure(address(zazu), address(wrongVault));
+    }
+
     function testConfigureRejectsAddressesWithoutCode() public {
         PonsFeeCollector fresh = new PonsFeeCollector(owner, address(weth), address(ponsLocker));
         address noCode = makeAddr("noCode");
@@ -263,5 +375,9 @@ contract PonsFeeCollectorTest is Test {
             10 ether,
             500
         );
+    }
+
+    function _openClaimWindow() internal {
+        vm.warp(collector.lastClaimTime() + collector.minimumClaimInterval());
     }
 }

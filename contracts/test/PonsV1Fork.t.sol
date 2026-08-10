@@ -94,6 +94,15 @@ interface IPonsV1LockerView {
     function feeRedirects(address token) external view returns (address);
 }
 
+interface IPonsV1LaunchedTokenView {
+    function liquidityPool() external view returns (address);
+}
+
+interface IPonsV3PoolView {
+    function token0() external view returns (address);
+    function token1() external view returns (address);
+}
+
 interface ISwapRouter02 {
     struct ExactInputSingleParams {
         address tokenIn;
@@ -200,6 +209,16 @@ contract PonsV1ForkTest is Test {
         assertEq(record.pairedToken, WETH, "wrong launched-token pair");
         assertEq(record.poolFee, POOL_FEE, "wrong launched-token pool fee");
 
+        address pool = IPonsV1LaunchedTokenView(token).liquidityPool();
+        assertTrue(pool != address(0), "launched token returned zero liquidity pool");
+        assertGt(pool.code.length, 0, "launched token liquidity pool has no code");
+        assertEq(
+            IPonsV3PoolView(pool).token0(), record.isToken0 ? token : WETH, "wrong live pool token0"
+        );
+        assertEq(
+            IPonsV3PoolView(pool).token1(), record.isToken0 ? WETH : token, "wrong live pool token1"
+        );
+
         PonsV3Adapter adapter = new PonsV3Adapter(PONS_SWAP_ROUTER, WETH, token, POOL_FEE);
         BuybackVault vault = new BuybackVault(
             address(this),
@@ -222,6 +241,8 @@ contract PonsV1ForkTest is Test {
         assertGt(wethReturned, 0, "live router sell returned no WETH");
 
         uint256 burnBeforeClaim = IERC20(token).balanceOf(BURN_ADDRESS);
+        vm.warp(collector.lastClaimTime() + collector.minimumClaimInterval());
+        vm.prank(keeper);
         (uint256 claimedWeth, uint256 claimedToken) = collector.claimAndFlush();
         assertGt(claimedWeth, 0, "no WETH creator fees claimed");
         assertGt(claimedToken, 0, "no token-side creator fees claimed");
@@ -233,7 +254,6 @@ contract PonsV1ForkTest is Test {
             "token-side fees were not burned"
         );
 
-        vm.warp(block.timestamp + vault.minimumInterval() + 1);
         uint256 burnBeforeBuyback = IERC20(token).balanceOf(BURN_ADDRESS);
         uint256 minimumBuybackOut = _minimumOut(_quote(WETH, token, claimedWeth));
         vm.prank(keeper);

@@ -22,7 +22,7 @@ PonsV3Adapter -> pons WETH/ZAZU V3 pool
 purchased ZAZU -> canonical burn address
 ```
 
-The active pons v1 locker pays creator rewards in WETH and ZAZU. The collector is set as the launch fee wallet. Its permissionless `claimAndFlush()` claims the creator share, forwards WETH to the vault, and burns token-side ZAZU. The keeper simulates the claim, skips an empty result, checks the vault and quote pins, applies price-impact and gas ceilings, simulates the buyback, and submits once.
+The active pons v1 locker pays creator rewards in WETH and ZAZU. The collector is set as the launch fee wallet. Its keeper-only `claimAndFlush()` enforces an onchain 15-minute claim interval, forwards WETH to the vault, and burns token-side ZAZU. The worker polls once per minute but waits for the vault window before simulating a claim, skips an empty result, checks the vault and quote pins, applies price-impact and gas ceilings, simulates the buyback, and submits each transaction once. The collector cooldown prevents repeated tiny claims if a later quote or buyback check must wait for another poll.
 
 This integration is for the active pons v1 WETH and Uniswap V3 path documented at [docs.ponsfamily.com](https://docs.ponsfamily.com/). It is not compatible with pons v2.
 

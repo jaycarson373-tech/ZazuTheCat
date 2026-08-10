@@ -6,11 +6,17 @@ import { PonsFeeCollector } from "../src/PonsFeeCollector.sol";
 
 /// @notice Deploy this first, then use its address as the pons creator wallet at token creation.
 contract DeployPonsFeeCollector is Script {
+    uint256 internal constant ROBINHOOD_MAINNET_CHAIN_ID = 4663;
+
     error ChainIdMismatch(uint256 expected, uint256 actual);
+    error RobinhoodMainnetChainRequired(uint256 actualChainId);
     error WrappedNativeHasNoCode(address value);
     error PonsLockerHasNoCode(address value);
 
     function run() external returns (PonsFeeCollector collector) {
+        if (block.chainid != ROBINHOOD_MAINNET_CHAIN_ID) {
+            revert RobinhoodMainnetChainRequired(block.chainid);
+        }
         uint256 expectedChainId = vm.envUint("CHAIN_ID");
         if (block.chainid != expectedChainId) {
             revert ChainIdMismatch(expectedChainId, block.chainid);

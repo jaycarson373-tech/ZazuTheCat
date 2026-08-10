@@ -8,9 +8,9 @@ export const metadata: Metadata = {
   title: "$ZAZU | The Internet's Most Locked-In Cat",
   description: "ZAZU's creator-fee share fuels transparent buybacks and permanent burns on Robinhood Chain. Powered by Pons.",
   icons: {
-    icon: "/zazu-favicon.png",
-    shortcut: "/zazu-favicon.png",
-    apple: "/zazu-apple-touch-icon.png",
+    icon: "/zazu-favicon.png?v=2",
+    shortcut: "/zazu-favicon.png?v=2",
+    apple: "/zazu-apple-touch-icon.png?v=2",
   },
   openGraph: {
     title: "$ZAZU | The Internet's Most Locked-In Cat",

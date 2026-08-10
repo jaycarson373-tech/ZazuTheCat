@@ -13,13 +13,18 @@ import { privateKeyToAccount } from "viem/accounts";
 import { setTimeout as sleep } from "node:timers/promises";
 import { selectAdaptiveBuySize } from "../keeper/adaptive-buy-size";
 import { buybackVaultAbi, erc20ReadAbi, ponsFeeCollectorAbi } from "../keeper/abi";
+import { cadenceWindow, REQUIRED_INTERVAL_SECONDS } from "../keeper/cadence";
 import { loadKeeperConfig, type KeeperConfig } from "../keeper/config";
+import { assertCreatorFeeReceiptProof } from "../keeper/creator-fee-proof";
+import { transitionAfterCreatorFeeClaim } from "../keeper/cycle-orchestration";
 import { acquireProcessLock } from "../keeper/lock";
 import { describeError, KeeperLogger } from "../keeper/logger";
-import { assertManualNonceState } from "../keeper/manual-nonce";
+import {
+  assertReconciledSignerNonce,
+  type SignerNoncePhase,
+} from "../keeper/manual-nonce";
 import { QuoteServiceError, requestDexQuote } from "../keeper/quote";
 
-const REQUIRED_INTERVAL_SECONDS = 15n * 60n;
 const BASIS_POINTS = 10_000n;
 const GAS_LIMIT_BUFFER_BPS = 12_000n;
 
@@ -147,14 +152,14 @@ async function withRpcBackoff<T>(
   throw new Error(`RPC retry loop ended unexpectedly for ${operation}`);
 }
 
-async function verifyManualNonce(options: {
+async function reconcileSignerNonce(options: {
   publicClient: PublicClient;
   config: KeeperConfig;
   logger: KeeperLogger;
   keeperAddress: Address;
-  expectedNonce: number;
-  phase: "creator_fee_flush" | "buyback";
-}): Promise<void> {
+  expectedNonce?: number;
+  phase: SignerNoncePhase;
+}): Promise<number> {
   const { publicClient, config, logger, keeperAddress, expectedNonce, phase } = options;
   const [latestNonce, pendingNonce] = await Promise.all([
     withRpcBackoff(`read_${phase}_latest_nonce`, config, logger, () =>
@@ -166,17 +171,25 @@ async function verifyManualNonce(options: {
   ]);
 
   try {
-    assertManualNonceState({ expectedNonce, latestNonce, pendingNonce, phase });
+    assertReconciledSignerNonce({
+      expectedNonce,
+      latestNonce,
+      pendingNonce,
+      phase,
+      executionMode: config.executionMode,
+    });
   } catch (error) {
     throw new KeeperHaltError((error as Error).message);
   }
 
-  await logger.write("info", "manual_nonce_guard_passed", {
+  await logger.write("info", "signer_nonce_guard_passed", {
     phase,
+    executionMode: config.executionMode,
     keeper: keeperAddress,
     latestNonce,
     pendingNonce,
   });
+  return latestNonce;
 }
 
 async function readVaultState(
@@ -326,21 +339,32 @@ async function processCreatorFees(options: {
   signerAccount?: ReturnType<typeof privateKeyToAccount>;
   keeperAddress: Address;
   logger: KeeperLogger;
-  latestBlock: { baseFeePerGas: bigint | null };
+  latestBlock: { baseFeePerGas: bigint | null; timestamp: bigint };
   cycleStartedAt: string;
   manualNonce?: number;
   shutdownSignal?: AbortSignal;
 }): Promise<boolean> {
   const { config, publicClient, logger, keeperAddress, latestBlock, cycleStartedAt } = options;
   const collector = { address: config.feeCollectorAddress, abi: ponsFeeCollectorAbi } as const;
-  const [configured, wrappedNativeToken, ponsLocker, zazuToken, buybackVault] =
-    await Promise.all([
+  const [
+    configured,
+    wrappedNativeToken,
+    ponsLocker,
+    zazuToken,
+    buybackVault,
+    minimumClaimInterval,
+    lastClaimTime,
+  ] = await withRpcBackoff("read_fee_collector_configuration", config, logger, () =>
+    Promise.all([
       publicClient.readContract({ ...collector, functionName: "configured" }),
       publicClient.readContract({ ...collector, functionName: "wrappedNativeToken" }),
       publicClient.readContract({ ...collector, functionName: "ponsLocker" }),
       publicClient.readContract({ ...collector, functionName: "zazuToken" }),
       publicClient.readContract({ ...collector, functionName: "buybackVault" }),
-    ]);
+      publicClient.readContract({ ...collector, functionName: "minimumClaimInterval" }),
+      publicClient.readContract({ ...collector, functionName: "lastClaimTime" }),
+    ]),
+  );
 
   if (!configured) throw new ConfigurationMismatchError("pons fee collector is not configured");
   const collectorPins: Array<[string, Address, Address]> = [
@@ -353,6 +377,28 @@ async function processCreatorFees(options: {
     if (!addressesEqual(actual, expected)) {
       throw new ConfigurationMismatchError(`${field} is ${actual}, expected ${expected}`);
     }
+  }
+  if (minimumClaimInterval !== REQUIRED_INTERVAL_SECONDS) {
+    throw new ConfigurationMismatchError(
+      `collector.minimumClaimInterval must be exactly ${REQUIRED_INTERVAL_SECONDS} seconds`,
+    );
+  }
+
+  const chainTimestamp = latestBlock.timestamp;
+  const claimCadence = cadenceWindow({
+    chainTimestamp,
+    lastActionTime: lastClaimTime,
+    interval: minimumClaimInterval,
+  });
+  if (!claimCadence.eligible) {
+    await logger.write("info", "creator_fee_flush_skipped", {
+      reason: "claim_interval_not_elapsed",
+      cycleStartedAt,
+      chainTimestamp,
+      nextClaimTime: claimCadence.nextEligibleTime,
+      secondsRemaining: claimCadence.secondsRemaining,
+    });
+    return false;
   }
 
   const flush = {
@@ -399,7 +445,12 @@ async function processCreatorFees(options: {
     return false;
   }
 
-  const keeperGasBalance = await publicClient.getBalance({ address: keeperAddress });
+  const keeperGasBalance = await withRpcBackoff(
+    "read_creator_fee_flush_gas_balance",
+    config,
+    logger,
+    () => publicClient.getBalance({ address: keeperAddress }),
+  );
   if (keeperGasBalance < maximumTransactionFee) {
     await logger.write("warn", "creator_fee_flush_skipped", {
       reason: "keeper_gas_balance_insufficient",
@@ -430,16 +481,14 @@ async function processCreatorFees(options: {
     });
     return false;
   }
-  if (options.manualNonce !== undefined) {
-    await verifyManualNonce({
-      publicClient,
-      config,
-      logger,
-      keeperAddress,
-      expectedNonce: options.manualNonce,
-      phase: "creator_fee_flush",
-    });
-  }
+  const submissionNonce = await reconcileSignerNonce({
+    publicClient,
+    config,
+    logger,
+    keeperAddress,
+    expectedNonce: options.manualNonce,
+    phase: "creator_fee_flush",
+  });
   if (options.shutdownSignal?.aborted) {
     await logger.write("info", "submission_skipped_for_shutdown", {
       phase: "creator_fee_flush",
@@ -456,7 +505,7 @@ async function processCreatorFees(options: {
       account: options.signerAccount,
       chain: options.walletClient.chain,
       gas: gasLimit,
-      ...(options.manualNonce === undefined ? {} : { nonce: options.manualNonce }),
+      nonce: submissionNonce,
     };
     transactionHash = feeParameters.kind === "eip1559"
       ? await options.walletClient.writeContract({
@@ -499,14 +548,63 @@ async function processCreatorFees(options: {
   if (receipt.status !== "success") {
     throw new KeeperHaltError(`Creator-fee forwarding reverted in ${transactionHash}`);
   }
+
+  let confirmedWethAmount = 0n;
+  let confirmedZazuAmount = 0n;
+  try {
+    const forwardedEvents = parseEventLogs({
+      abi: ponsFeeCollectorAbi,
+      eventName: "CreatorFeesForwarded",
+      logs: receipt.logs,
+      strict: true,
+    })
+      .filter((event) => addressesEqual(event.address, config.feeCollectorAddress))
+      .map((event) => ({
+        wrappedNativeAmount: event.args.wrappedNativeAmount,
+        zazuAmount: event.args.zazuAmount,
+      }));
+    const directBurnEvents = parseEventLogs({
+      abi: buybackVaultAbi,
+      eventName: "DirectZazuBurned",
+      logs: receipt.logs,
+      strict: true,
+    })
+      .filter((event) => addressesEqual(event.address, config.vaultAddress))
+      .map((event) => ({
+        amount: event.args.amount,
+        destination: event.args.destination,
+      }));
+    const confirmed = assertCreatorFeeReceiptProof({
+      expectedBurnDestination: config.expectedDestination,
+      forwardedEvents,
+      directBurnEvents,
+    });
+    confirmedWethAmount = confirmed.wrappedNativeAmount;
+    confirmedZazuAmount = confirmed.zazuAmount;
+  } catch (error) {
+    await logger.write("error", "creator_fee_proof_mismatch", {
+      cycleStartedAt,
+      transactionHash,
+      blockNumber: receipt.blockNumber,
+      simulatedWethAmount: wethBalance,
+      simulatedZazuAmount: zazuBalance,
+      retryTransaction: false,
+      ...describeError(error),
+    });
+    throw new KeeperHaltError(
+      `Confirmed creator-fee transaction ${transactionHash} did not emit the expected forwarding and burn proof`,
+    );
+  }
   await logger.write("info", "creator_fees_forwarded", {
     cycleStartedAt,
     transactionHash,
-    wethBalance,
-    zazuBalance,
+    wethBalance: confirmedWethAmount,
+    zazuBalance: confirmedZazuAmount,
+    simulatedWethBalance: wethBalance,
+    simulatedZazuBalance: zazuBalance,
     blockNumber: receipt.blockNumber,
     executionMode: config.executionMode,
-    nonce: options.manualNonce,
+    nonce: submissionNonce,
     manualReason: config.manualReason,
   });
   return true;
@@ -539,6 +637,26 @@ async function runCycle(options: {
     return;
   }
 
+  // Do not collect creator fees on every one-minute poll. Both the vault and
+  // collector enforce a 15-minute cadence onchain; this early gate avoids a
+  // pointless claim simulation until the buyback window is open.
+  const initialChainTimestamp = latestBlock.timestamp;
+  const initialCadence = cadenceWindow({
+    chainTimestamp: initialChainTimestamp,
+    lastActionTime: state.lastExecutionTime,
+    interval: state.minimumInterval,
+  });
+  if (!initialCadence.eligible) {
+    await logger.write("info", "cycle_skipped", {
+      reason: "interval_not_elapsed",
+      cycleStartedAt,
+      chainTimestamp: initialChainTimestamp,
+      nextEligibleTime: initialCadence.nextEligibleTime,
+      secondsRemaining: initialCadence.secondsRemaining,
+    });
+    return;
+  }
+
   const creatorFeesForwarded = await processCreatorFees({
     ...options,
     latestBlock,
@@ -549,8 +667,12 @@ async function runCycle(options: {
     await logger.write("info", "cycle_stopped_before_submission", { cycleStartedAt });
     return;
   }
-  if (creatorFeesForwarded) {
-    if (nextManualNonce !== undefined) nextManualNonce += 1;
+  const claimTransition = transitionAfterCreatorFeeClaim({
+    creatorFeesForwarded,
+    expectedNonce: nextManualNonce,
+  });
+  nextManualNonce = claimTransition.nextExpectedNonce;
+  if (claimTransition.refreshVaultState) {
     [state, latestBlock] = await Promise.all([
       readVaultState(publicClient, config, logger),
       withRpcBackoff("refresh_latest_block_after_fee_flush", config, logger, () =>
@@ -566,14 +688,18 @@ async function runCycle(options: {
   }
 
   const chainTimestamp = latestBlock.timestamp;
-  const nextEligibleTime = state.lastExecutionTime + state.minimumInterval;
-  if (chainTimestamp < nextEligibleTime) {
+  const buybackCadence = cadenceWindow({
+    chainTimestamp,
+    lastActionTime: state.lastExecutionTime,
+    interval: state.minimumInterval,
+  });
+  if (!buybackCadence.eligible) {
     await logger.write("info", "cycle_skipped", {
       reason: "interval_not_elapsed",
       cycleStartedAt,
       chainTimestamp,
-      nextEligibleTime,
-      secondsRemaining: nextEligibleTime - chainTimestamp,
+      nextEligibleTime: buybackCadence.nextEligibleTime,
+      secondsRemaining: buybackCadence.secondsRemaining,
     });
     return;
   }
@@ -846,16 +972,14 @@ async function runCycle(options: {
     });
     return;
   }
-  if (nextManualNonce !== undefined) {
-    await verifyManualNonce({
-      publicClient,
-      config,
-      logger,
-      keeperAddress,
-      expectedNonce: nextManualNonce,
-      phase: "buyback",
-    });
-  }
+  const submissionNonce = await reconcileSignerNonce({
+    publicClient,
+    config,
+    logger,
+    keeperAddress,
+    expectedNonce: nextManualNonce,
+    phase: "buyback",
+  });
   if (options.shutdownSignal?.aborted) {
     await logger.write("info", "submission_skipped_for_shutdown", {
       phase: "buyback",
@@ -876,7 +1000,7 @@ async function runCycle(options: {
       account: options.signerAccount,
       chain: options.walletClient.chain,
       gas: gasLimit,
-      ...(nextManualNonce === undefined ? {} : { nonce: nextManualNonce }),
+      nonce: submissionNonce,
     };
     transactionHash =
       feeParameters.kind === "eip1559"
@@ -912,7 +1036,7 @@ async function runCycle(options: {
     boundedFeePerGas,
     maximumTransactionFee,
     executionMode: config.executionMode,
-    nonce: nextManualNonce,
+    nonce: submissionNonce,
     manualReason: config.manualReason,
   });
 
@@ -1020,7 +1144,7 @@ async function runCycle(options: {
     gasUsed: receipt.gasUsed,
     effectiveGasPrice: receipt.effectiveGasPrice,
     executionMode: config.executionMode,
-    nonce: nextManualNonce,
+    nonce: submissionNonce,
     manualReason: config.manualReason,
   });
 }
@@ -1083,6 +1207,17 @@ async function main(): Promise<void> {
       );
     }
 
+    const startupNonce =
+      !config.dryRun && config.executionMode === "automatic"
+        ? await reconcileSignerNonce({
+            publicClient,
+            config,
+            logger,
+            keeperAddress,
+            phase: "startup",
+          })
+        : undefined;
+
     await logger.write("info", "keeper_started", {
       chainId: config.chainId,
       vault: config.vaultAddress,
@@ -1091,6 +1226,7 @@ async function main(): Promise<void> {
       dryRun: config.dryRun,
       runOnce: config.runOnce,
       executionMode: config.executionMode,
+      startupNonce,
       manualExpectedNonce: config.manualExpectedNonce,
       manualReason: config.manualReason,
       pollIntervalMs: config.pollIntervalMs,

@@ -18,6 +18,7 @@ export const buybackVaultAbi = parseAbi([
   "function burnDirectZazu() returns (uint256 amount)",
   "function executeBuyback(uint256 amountIn, uint256 minimumZazuOut, bytes routerData)",
   "event BuybackExecuted(uint256 indexed executionId, address indexed inputAsset, uint256 amountIn, uint256 zazuReceived, address indexed destination, uint256 timestamp)",
+  "event DirectZazuBurned(uint256 amount, address indexed destination, uint256 timestamp)",
 ]);
 
 export const ponsFeeCollectorAbi = parseAbi([
@@ -26,6 +27,8 @@ export const ponsFeeCollectorAbi = parseAbi([
   "function ponsLocker() view returns (address)",
   "function zazuToken() view returns (address)",
   "function buybackVault() view returns (address)",
+  "function minimumClaimInterval() view returns (uint256)",
+  "function lastClaimTime() view returns (uint256)",
   "function flush() returns (uint256 wethAmount, uint256 zazuAmount)",
   "function claimAndFlush() returns (uint256 wethAmount, uint256 zazuAmount)",
   "event CreatorFeesForwarded(uint256 wrappedNativeAmount, uint256 zazuAmount)",

@@ -5,15 +5,36 @@ export interface ManualNonceState {
   phase: "creator_fee_flush" | "buyback";
 }
 
-export function assertManualNonceState(state: ManualNonceState): void {
+export type SignerNoncePhase = "startup" | "creator_fee_flush" | "buyback";
+
+export interface SignerNonceState {
+  latestNonce: number;
+  pendingNonce: number;
+  phase: SignerNoncePhase;
+  executionMode: "automatic" | "manual";
+  expectedNonce?: number;
+}
+
+/**
+ * Returns the only nonce that is safe to submit explicitly. A pending nonce
+ * always fails closed so a restarted or overlapping worker cannot queue a
+ * transaction behind an unresolved one.
+ */
+export function assertReconciledSignerNonce(state: SignerNonceState): number {
+  const mode = state.executionMode === "manual" ? "Manual" : "Automatic";
   if (state.latestNonce !== state.pendingNonce) {
     throw new Error(
-      `Manual ${state.phase} blocked because signer nonce ${state.pendingNonce} is pending while latest is ${state.latestNonce}. Reconcile pending transactions first.`,
+      `${mode} ${state.phase} blocked because signer nonce ${state.pendingNonce} is pending while latest is ${state.latestNonce}. Reconcile pending transactions first.`,
     );
   }
-  if (state.latestNonce !== state.expectedNonce) {
+  if (state.expectedNonce !== undefined && state.latestNonce !== state.expectedNonce) {
     throw new Error(
-      `Manual ${state.phase} expected signer nonce ${state.expectedNonce}, but the chain reports ${state.latestNonce}. Re-read the nonce and restart with an explicit acknowledgement.`,
+      `${mode} ${state.phase} expected signer nonce ${state.expectedNonce}, but the chain reports ${state.latestNonce}. Re-read the nonce and restart with an explicit acknowledgement.`,
     );
   }
+  return state.latestNonce;
+}
+
+export function assertManualNonceState(state: ManualNonceState): void {
+  assertReconciledSignerNonce({ ...state, executionMode: "manual" });
 }

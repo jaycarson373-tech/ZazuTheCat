@@ -35,7 +35,22 @@ After redeploying, verify both endpoints against the explorer:
 ```text
 https://<SITE_HOST>/api/stats
 https://<SITE_HOST>/api/buybacks?page=1&pageSize=20
+https://<SITE_HOST>/api/activity?limit=12
 ```
+
+`/api/activity` combines three contract-derived receipts without a database:
+`CreatorFeesForwarded` from `PONS_FEE_COLLECTOR_ADDRESS`, plus
+`DirectZazuBurned` and `BuybackExecuted` from the vault. For collector events it
+also reads the confirmed transaction input so `claimAndFlush()` is labeled as a
+claim plus flush while an ordinary `flush()` remains distinct. The endpoint
+uses a block-and-log cursor for older activity and scans in bounded block
+windows. `ACTIVITY_LOG_BLOCK_SPAN` can tune that window for the selected RPC.
+It reads only through `chain head - ACTIVITY_CONFIRMATION_DEPTH`, which defaults
+to two blocks, so the UI does not describe head-block logs as confirmed. The
+collector source is included only after its bytecode, configured flag, ZAZU
+token, buyback vault, and 900-second claim cadence all match. Missing or invalid
+collector configuration leaves vault receipts available but marks the V1 trail
+as incomplete. Zero-value `CreatorFeesForwarded` events are excluded.
 
 ## Railway
 
@@ -46,15 +61,19 @@ Build command: npm install --include=dev
 Start command: npm run keeper
 Replica count: 1
 Node version: 22.13 or newer
+Restart policy: Never
+GitHub autodeploy: Disabled
 ```
 
 Import [`deploy/railway.env.example`](deploy/railway.env.example) and replace every placeholder. The keeper compares every pinned value to the deployed vault and stops when any value differs.
 
-Keep `KEEPER_DRY_RUN=true` for the first complete quote and simulation. Review the log, confirm the adapter, route, amount, minimum output, price impact, and gas bounds, then set it to `false` to permit submission. Do not run multiple Railway replicas because the included lock is local to one machine, not a distributed lock.
+Keep `KEEPER_DRY_RUN=true` for the first complete quote and simulation. Review the log, confirm the adapter, route, amount, minimum output, price impact, and gas bounds, then set it to `false` to permit submission. Do not run multiple Railway replicas because the included lock is local to one machine, not a distributed lock. Do not use rolling deployments. Before every deployment or resume, stop the service, wait for `keeper_stopped`, confirm no other deployment exists, and verify the signer wallet reports identical `latest` and `pending` nonces. Live automatic startup and every write repeat this check and use the reconciled nonce explicitly; any mismatch exits and remains stopped under restart policy Never.
 
 `DEX_ROUTER_ADDRESS` is the deployed `PonsV3Adapter`, not the underlying swap router. The keeper quote URL points to the server-side `/api/quote` route. For this adapter, `WRAPPED_NATIVE_ADDRESS` and `FEE_TOKEN_ADDRESS` must both pin the official pons WETH, and the adapter accepts only empty `routeData`.
 
-`PONS_FEE_COLLECTOR_ADDRESS` pins the collector used as the pons creator wallet. `PONS_LOCKER_ADDRESS` pins the active v1 locker. The Railway keeper simulates the collector's permissionless `claimAndFlush()`, skips an empty claim, and submits only when a creator share is available. The collector claims from the pinned locker, forwards WETH to the vault, accounts it, forwards token-side ZAZU, and invokes the vault's `burnDirectZazu()`. Those functions cannot choose a recipient and can only send ZAZU to the canonical burn address.
+`PONS_FEE_COLLECTOR_ADDRESS` pins the collector used as the pons creator wallet. `PONS_LOCKER_ADDRESS` pins the active v1 locker. The Railway process polls once per minute, but it waits for the vault's 15-minute execution window before simulating the collector's `claimAndFlush()`. The collector permits that claim only from the vault's current keeper and independently enforces a 15-minute claim interval onchain. It skips an empty claim and submits only when a creator share is available. The collector claims from the pinned locker, forwards WETH to the vault, accounts it, forwards token-side ZAZU, and invokes the vault's `burnDirectZazu()`. Those functions cannot choose a recipient and can only send ZAZU to the canonical burn address.
+
+After confirmation, the keeper requires exactly one nonzero `CreatorFeesForwarded` receipt and treats its amounts as authoritative because fees can accrue after simulation. A nonzero forwarded ZAZU amount must also have one `DirectZazuBurned` receipt from the vault to the canonical burn address covering at least the forwarded amount. The burn may be larger when pre-existing dust or direct donations were already in the vault. Missing or insufficient proof halts the service before the buyback phase.
 
 ### Guarded manual fallback
 
@@ -86,7 +105,7 @@ Here, `100% of creator fees` means every WETH and ZAZU amount actually paid to t
 
 The collector resolves deployment order safely. Deploy `PonsFeeCollector` before token creation and use its printed address as the pons creator fee wallet. After pons creates ZAZU, deploy the adapter and vault, then configure the collector exactly once. The collector verifies the vault's token, WETH fee asset, and canonical burn destination and has no arbitrary withdrawal function.
 
-`PonsFeeCollector.claimAndFlush()` calls the pinned active locker as the configured fee recipient. The verified locker authorizes the launch deployer, redirect recipient, owner, or an approved collector to call `collectFees(token)`. The deployment configuration verifies that `feeRedirects(ZAZU)` equals the collector before ownership transfer. Verify that redirect again on the explorer before enabling Railway submissions.
+`PonsFeeCollector.claimAndFlush()` calls the pinned active locker as the configured fee recipient. The verified locker authorizes the launch deployer, redirect recipient, owner, or an approved collector to call `collectFees(token)`. The collector additionally requires the caller to be the current vault keeper and records `lastClaimTime`, preventing another successful claim for 15 minutes. The deployment configuration verifies that `feeRedirects(ZAZU)` equals the collector before ownership transfer. Verify that redirect, `minimumClaimInterval() == 900`, and the vault keeper again on the explorer before enabling Railway submissions.
 
 WETH fees are swapped for ZAZU by the bounded adapter. ZAZU-side creator fees are already the target token, so `burnDirectZazu()` sends them directly to the canonical burn address and records them in `totalZazuBurned`.
 
@@ -97,26 +116,54 @@ No pons private key or wallet credential belongs in the website. The user-facing
 Deploy the collector first with:
 
 ```text
-CHAIN_ID=<DECIMAL_CHAIN_ID>
+CHAIN_ID=4663
 DEPLOYER_PRIVATE_KEY=<DEPLOYER_SECRET>
 WRAPPED_NATIVE_ADDRESS=<OFFICIAL_PONS_WETH_ADDRESS>
 PONS_LOCKER_ADDRESS=0x736D76699C26D0d966744cAe304C000d471f7F35
 ```
 
+For Robinhood mainnet, `CHAIN_ID` must be `4663`. Both mainnet scripts hard-revert on every other runtime chain even if the environment is misconfigured. From the repository root, first simulate and inspect each script without `--broadcast`, then repeat the identical command with `--broadcast` only after the trace and resolved addresses are approved:
+
+```sh
+forge script --root contracts script/DeployPonsFeeCollector.s.sol:DeployPonsFeeCollector \
+  --rpc-url "$ROBINHOOD_RPC_URL"
+
+forge script --root contracts script/DeployPonsFeeCollector.s.sol:DeployPonsFeeCollector \
+  --rpc-url "$ROBINHOOD_RPC_URL" --broadcast --slow
+```
+
 Use the printed collector address as the creator fee wallet when launching ZAZU through pons v1. If the interface instead presents a bonding curve, custom pairing asset, or creator-tax configuration, stop because that is the incompatible v2 flow. After the ZAZU address exists, deploy the adapter and vault with:
 
 ```text
+CHAIN_ID=4663
+DEPLOYER_PRIVATE_KEY=<DEPLOYER_SECRET>
 ZAZU_TOKEN_ADDRESS=<PONS_LAUNCHED_ZAZU_ADDRESS>
 PONS_FEE_COLLECTOR_ADDRESS=<PREDEPLOYED_CREATOR_FEE_COLLECTOR_ADDRESS>
-PONS_SWAP_ROUTER_ADDRESS=<OFFICIAL_PONS_SWAP_ROUTER_ADDRESS>
+PONS_LOCKER_ADDRESS=0x736D76699C26D0d966744cAe304C000d471f7F35
+PONS_SWAP_ROUTER_ADDRESS=0xCaf681a66D020601342297493863E78C959E5cb2
 PONS_POOL_FEE=10000
-WRAPPED_NATIVE_ADDRESS=<OFFICIAL_PONS_WETH_ADDRESS>
-FEE_TOKEN_ADDRESS=<SAME_OFFICIAL_PONS_WETH_ADDRESS>
+WRAPPED_NATIVE_ADDRESS=0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73
+FEE_TOKEN_ADDRESS=0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73
 KEEPER_ADDRESS=<RAILWAY_KEEPER_ADDRESS>
-BUYBACK_DESTINATION=<CANONICAL_BURN_ADDRESS>
+BUYBACK_DESTINATION=0x000000000000000000000000000000000000dEaD
+INITIAL_OWNER=<MULTISIG_CONTRACT_ADDRESS>
+MIN_EXECUTION_AMOUNT=<MINIMUM_WETH_BUY_IN_WEI>
+MAX_EXECUTION_AMOUNT=<MAXIMUM_WETH_BUY_IN_WEI>
+MAX_SLIPPAGE_BPS=<INTEGER_FROM_1_TO_500>
+CONFIGURATION_DELAY_SECONDS=172800
 ```
 
 Verify the router and WETH addresses against the current pons contract registry and confirm bytecode on the Robinhood Chain explorer immediately before deployment. The adapter address printed by the deployment becomes Railway's `DEX_ROUTER_ADDRESS` fail-closed pin. The collector address is pinned separately as `PONS_FEE_COLLECTOR_ADDRESS`.
+
+After the pons V1 token exists and every deployment pin above is populated, simulate and then broadcast the adapter, vault, collector configuration, timelock, and ownership-transfer sequence with:
+
+```sh
+forge script --root contracts script/DeployRobinhoodMainnet.s.sol:DeployRobinhoodMainnet \
+  --rpc-url "$ROBINHOOD_RPC_URL"
+
+forge script --root contracts script/DeployRobinhoodMainnet.s.sol:DeployRobinhoodMainnet \
+  --rpc-url "$ROBINHOOD_RPC_URL" --broadcast --slow
+```
 
 ## Supabase optional mirror
 

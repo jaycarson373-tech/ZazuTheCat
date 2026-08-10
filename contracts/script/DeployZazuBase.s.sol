@@ -29,6 +29,7 @@ abstract contract DeployZazuBase is Script {
     error CollectorOwnerMismatch(address expected, address actual);
     error CollectorWrappedNativeMismatch(address expected, address actual);
     error CollectorPonsLockerMismatch(address expected, address actual);
+    error CollectorClaimIntervalMismatch(uint256 expected, uint256 actual);
     error CollectorAlreadyConfigured(address collector);
 
     function _deploy(bool mainnet) internal returns (Deployment memory deployment) {
@@ -93,13 +94,15 @@ abstract contract DeployZazuBase is Script {
         if (address(collector.ponsLocker()) != ponsLocker) {
             revert CollectorPonsLockerMismatch(ponsLocker, address(collector.ponsLocker()));
         }
+        if (collector.minimumClaimInterval() != 15 minutes) {
+            revert CollectorClaimIntervalMismatch(15 minutes, collector.minimumClaimInterval());
+        }
         if (collector.configured()) revert CollectorAlreadyConfigured(collectorAddress);
 
         vm.startBroadcast(deployerPrivateKey);
 
-        PonsV3Adapter adapter = new PonsV3Adapter(
-            ponsSwapRouter, wrappedNative, existingToken, ponsPoolFee
-        );
+        PonsV3Adapter adapter =
+            new PonsV3Adapter(ponsSwapRouter, wrappedNative, existingToken, ponsPoolFee);
 
         BuybackVault vault = new BuybackVault(
             deployer,
