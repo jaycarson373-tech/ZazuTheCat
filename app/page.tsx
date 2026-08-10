@@ -2,6 +2,7 @@ import Image from "next/image";
 import { CopyButton } from "@/components/CopyButton";
 import { HeroMiniDashboard } from "@/components/HeroMiniDashboard";
 import { MotionController } from "@/components/MotionController";
+import { OnchainActivity } from "@/components/OnchainActivity";
 import { ZAZU } from "@/lib/zazu";
 
 const mechanicSteps = [
@@ -49,6 +50,7 @@ function ExternalLink({
 
 export default function Home() {
   const hasRegistry = Boolean(ZAZU.tokenAddress || ZAZU.vaultAddress);
+  const dashboardConfigured = Boolean(ZAZU.tokenAddress && ZAZU.vaultAddress);
 
   return (
     <main>
@@ -67,7 +69,7 @@ export default function Home() {
         </a>
 
         <nav className="header-nav" aria-label="Main navigation">
-          <a href="#stats">Dashboard</a>
+          <a href="#activity">Dashboard</a>
           <a href="#mechanism">How it works</a>
           <a href="#elements">Zazu Files</a>
         </nav>
@@ -143,14 +145,25 @@ export default function Home() {
 
       <div className="ticker" aria-hidden="true">
         <div>
-          <span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK RUNNING</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
-          <span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK RUNNING</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
+          <span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
+          <span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
         </div>
       </div>
 
+      <section className="dashboard-section" id="activity" data-reveal>
+        <div className="section-shell">
+          <div className="section-kicker section-kicker-light"><span>01</span><p>THE ONCHAIN RECEIPTS</p></div>
+          <div className="section-heading dashboard-heading">
+            <div><p className="eyebrow eyebrow-light"><i /> EVERY STEP, ONE FEED</p><h2>FOLLOW THE<br />FULL LOOP.</h2></div>
+            <p>See creator fees move from Pons into the vault, token-side fees burn directly, and WETH-side fees buy and burn ZAZU.</p>
+          </div>
+          <OnchainActivity siteConfigured={dashboardConfigured} />
+        </div>
+      </section>
+
       <section className="mechanism-section" id="mechanism" data-reveal>
         <div className="section-shell">
-          <div className="section-kicker"><span>01</span><p>HOW THE LOOP WORKS</p></div>
+          <div className="section-kicker"><span>02</span><p>HOW THE LOOP WORKS</p></div>
           <div className="section-heading mechanism-heading">
             <div><p className="eyebrow"><i /> AUTOMATED ONCHAIN LOOP</p><h2>FEES IN.<br />ZAZU OUT.</h2></div>
             <p>Pons creator fees enter the vault, the buyback runs, and purchased ZAZU goes straight to the burn destination.</p>
@@ -168,7 +181,7 @@ export default function Home() {
 
       <section className="wall-section" id="elements" data-reveal>
         <div className="section-shell">
-          <div className="section-kicker"><span>02</span><p>THE ZAZU FILES</p></div>
+          <div className="section-kicker"><span>03</span><p>THE ZAZU FILES</p></div>
           <div className="original-files original-files-feature">
             <div className="original-image">
               <Image src="/zazu-elements.jpg" alt="Four early internet Zazu edits representing earth, void, water, and fire" fill sizes="(max-width: 720px) 94vw, 44vw" />
@@ -207,7 +220,7 @@ export default function Home() {
       {hasRegistry ? (
         <section className="registry-section" id="registry" data-reveal>
           <div className="section-shell">
-            <div className="section-kicker"><span>03</span><p>VERIFY ONCHAIN</p></div>
+            <div className="section-kicker"><span>04</span><p>VERIFY ONCHAIN</p></div>
             <div className="registry-layout">
               <div><p className="eyebrow"><i /> CHECK EVERY ADDRESS</p><h2>FOLLOW THE<br />MONEY.</h2></div>
               <div className="registry-table">

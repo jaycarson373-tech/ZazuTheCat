@@ -54,6 +54,22 @@ test("renders a zero-based mini dashboard, simple mechanism, and header actions"
   assert.match(html, /header-chip header-chip-placeholder[^>]*>X<\/button>/i);
 });
 
+test("renders the complete V1 onchain activity terminal", async () => {
+  const html = await render();
+  assert.match(html, /THE ONCHAIN RECEIPTS/i);
+  assert.match(html, /FOLLOW THE[\s\S]*FULL LOOP/i);
+  assert.match(html, /TOTAL ZAZU BURNED/i);
+  assert.match(html, /ONCHAIN RECEIPTS/i);
+  assert.match(html, /ONCHAIN ACTIVITY/i);
+  assert.match(html, /CLAIM \+ FLUSH/i);
+  assert.match(html, /DIRECT TOKEN BURN/i);
+  assert.match(html, /MARKET BUY \+ BURN/i);
+  assert.doesNotMatch(html, /COMPLETE V1 TRAIL/i);
+  assert.doesNotMatch(html, /PARTIAL ONCHAIN FEED|V1 TRAIL INCOMPLETE|SOURCE INCOMPLETE/i);
+  assert.match(html, /NO ACTIVITY RECORDED/i);
+  assert.doesNotMatch(html, /SUPABASE/i);
+});
+
 test("renders the Zazu Files lore without inventing a birthday", async () => {
   const html = await render();
   assert.match(html, /THE ZAZU FILES/i);

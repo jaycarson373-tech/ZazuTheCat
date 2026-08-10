@@ -210,6 +210,7 @@ h1, h2, h3, p { margin-top: 0; }
 .proof-row code { font-size: .75rem; }
 .proof-row a { border-bottom: 1px solid var(--white); font-size: .64rem; font-weight: 900; }
 .terminal-error { background: var(--red); border-top: 3px solid var(--white); font-family: var(--font-geist-mono), monospace; font-size: .65rem; font-weight: 900; margin: 0; padding: 11px 18px; }
+.terminal-incomplete { background: var(--neon); border-top: 3px solid var(--white); color: var(--ink); font-family: var(--font-geist-mono), monospace; font-size: .65rem; font-weight: 900; line-height: 1.45; margin: 0; padding: 11px 18px; }
 .history-head { align-items: end; border-top: 3px solid var(--white); display: grid; gap: 30px; grid-template-columns: 1fr 1fr; padding: 30px 20px 22px; }
 .history-head span { color: var(--neon); font-family: var(--font-geist-mono), monospace; font-size: .58rem; font-weight: 900; }
 .history-head h3 { font-size: clamp(1.7rem,3vw,3.2rem); font-weight: 950; letter-spacing: -.06em; margin: 7px 0 0; }
@@ -219,6 +220,13 @@ h1, h2, h3, p { margin-top: 0; }
 .history-row span { align-items: center; border-right: 1px solid #555; display: flex; min-height: 56px; padding: 10px 12px; }
 .history-row span:last-child { border-right: 0; }
 .history-row a { color: var(--neon); font-weight: 900; }
+.activity-kind { align-items: center; display: inline-flex; font-size: .57rem; font-weight: 950; letter-spacing: .02em; line-height: 1.15; min-height: 27px; padding: 5px 7px; }
+.activity-kind-claim_flush { background: var(--neon); color: var(--ink); }
+.activity-kind-fee_flush, .activity-kind-fees_forwarded { background: var(--gray); color: var(--ink); }
+.activity-kind-direct_burn { background: var(--red); color: var(--white); }
+.activity-kind-buyback { background: var(--gray); color: var(--ink); }
+.activity-kind-buyback_burn { background: var(--blue); color: var(--white); }
+.activity-legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
 .history-labels { background: #1f1f1f; color: var(--neon); font-size: .58rem; font-weight: 900; }
 .history-empty { align-items: center; display: flex; flex-direction: column; font-family: var(--font-geist-mono), monospace; gap: 8px; justify-content: center; min-height: 150px; padding: 25px; text-align: center; }
 .history-empty strong { color: var(--neon); }
