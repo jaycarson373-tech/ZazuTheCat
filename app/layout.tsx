@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || "https://zazu-still-staring.vercel.app",
   ),
   title: "$ZAZU | The Internet's Most Locked-In Cat",
-  description: "ZAZU's creator-fee share fuels transparent buybacks and permanent burns on Robinhood Chain. Powered by Pons.",
+  description: "Meet The ZAZU 1000, a custom handmade NFT collection from the internet's most locked-in cat, alongside transparent buybacks and burns on Robinhood Chain.",
   icons: {
     icon: "/zazu-favicon.png?v=2",
     shortcut: "/zazu-favicon.png?v=2",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "$ZAZU | The Internet's Most Locked-In Cat",
-    description: "Built on Robinhood Chain. Powered by Pons. Creator fees fuel transparent ZAZU buybacks and permanent burns.",
+    description: "The ZAZU 1000 is a custom handmade NFT collection, backed by transparent ZAZU buybacks and burns on Robinhood Chain.",
     type: "website",
     siteName: "Zazu",
     images: [{ url: "/og.png", width: 1731, height: 909, alt: "$ZAZU, the internet's most locked-in cat" }],
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "$ZAZU | The Internet's Most Locked-In Cat",
-    description: "Built on Robinhood Chain. Powered by Pons. Creator fees fuel transparent ZAZU buybacks and permanent burns.",
+    description: "The ZAZU 1000 is a custom handmade NFT collection, backed by transparent ZAZU buybacks and burns on Robinhood Chain.",
     images: ["/og.png"],
   },
 };

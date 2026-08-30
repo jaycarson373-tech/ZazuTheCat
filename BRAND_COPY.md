@@ -12,6 +12,16 @@
 
 **Platform line:** POWERED BY PONS
 
+## The Zazu 1000
+
+**Collection:** THE ZAZU 1000
+
+**Headline:** 1,000 ZAZUS. MADE BY HAND.
+
+A finite collection of 1,000 custom handmade ZAZU NFTs. Every file remixes the original stare into its own strange little universe.
+
+Use a live mint button only when it points to the verified collection mint. Do not invent mint totals, price, rarity, utility, or sold-out claims.
+
 ## Zazu Files
 
 **DATE OF BIRTH: CLASSIFIED.**

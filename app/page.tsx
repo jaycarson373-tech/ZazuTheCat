@@ -2,6 +2,7 @@ import Image from "next/image";
 import { CopyButton } from "@/components/CopyButton";
 import { HeroMiniDashboard } from "@/components/HeroMiniDashboard";
 import { MotionController } from "@/components/MotionController";
+import { NftMintSection } from "@/components/NftMintSection";
 import { OnchainActivity } from "@/components/OnchainActivity";
 import { ZAZU } from "@/lib/zazu";
 
@@ -69,9 +70,9 @@ export default function Home() {
         </a>
 
         <nav className="header-nav" aria-label="Main navigation">
+          <a href="#mint">NFTs</a>
           <a href="#activity">Dashboard</a>
           <a href="#mechanism">How it works</a>
-          <a href="#elements">Zazu Files</a>
         </nav>
 
         <div className="header-actions">
@@ -101,6 +102,11 @@ export default function Home() {
           <p className="hero-dek">Creator fees buy ZAZU. ZAZU gets burned.</p>
 
           <div className="hero-actions">
+            {ZAZU.nftMintUrl ? (
+              <ExternalLink className="button button-dark" href={ZAZU.nftMintUrl}>MINT ZAZU NFTS ↗</ExternalLink>
+            ) : (
+              <a className="button button-dark" href="#mint">THE ZAZU 1000 ↓</a>
+            )}
             <ExternalLink className="button button-neon" href={ZAZU.ponsUrl}>POWERED BY PONS ↗</ExternalLink>
             <a className="button button-outline" href="#mechanism">HOW IT WORKS ↓</a>
             {ZAZU.dexUrl ? (
@@ -145,14 +151,16 @@ export default function Home() {
 
       <div className="ticker" aria-hidden="true">
         <div>
-          <span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
-          <span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
+          <span>1,000 HANDMADE ZAZUS</span><b>✦</b><span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
+          <span>1,000 HANDMADE ZAZUS</span><b>✦</b><span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
         </div>
       </div>
 
+      <NftMintSection mintUrl={ZAZU.nftMintUrl} supply={ZAZU.nftSupply} />
+
       <section className="dashboard-section" id="activity" data-reveal>
         <div className="section-shell">
-          <div className="section-kicker section-kicker-light"><span>01</span><p>THE ONCHAIN RECEIPTS</p></div>
+          <div className="section-kicker section-kicker-light"><span>02</span><p>THE ONCHAIN RECEIPTS</p></div>
           <div className="section-heading dashboard-heading">
             <div><p className="eyebrow eyebrow-light"><i /> EVERY STEP, ONE FEED</p><h2>FOLLOW THE<br />FULL LOOP.</h2></div>
             <p>See creator fees move from Pons into the vault, token-side fees burn directly, and WETH-side fees buy and burn ZAZU.</p>
@@ -163,7 +171,7 @@ export default function Home() {
 
       <section className="mechanism-section" id="mechanism" data-reveal>
         <div className="section-shell">
-          <div className="section-kicker"><span>02</span><p>HOW THE LOOP WORKS</p></div>
+          <div className="section-kicker"><span>03</span><p>HOW THE LOOP WORKS</p></div>
           <div className="section-heading mechanism-heading">
             <div><p className="eyebrow"><i /> AUTOMATED ONCHAIN LOOP</p><h2>FEES IN.<br />ZAZU OUT.</h2></div>
             <p>Pons creator fees enter the vault, the buyback runs, and purchased ZAZU goes straight to the burn destination.</p>
@@ -181,7 +189,7 @@ export default function Home() {
 
       <section className="wall-section" id="elements" data-reveal>
         <div className="section-shell">
-          <div className="section-kicker"><span>03</span><p>THE ZAZU FILES</p></div>
+          <div className="section-kicker"><span>04</span><p>THE ZAZU FILES</p></div>
           <div className="original-files original-files-feature">
             <div className="original-image">
               <Image src="/zazu-elements.jpg" alt="Four early internet Zazu edits representing earth, void, water, and fire" fill sizes="(max-width: 720px) 94vw, 44vw" />
@@ -220,7 +228,7 @@ export default function Home() {
       {hasRegistry ? (
         <section className="registry-section" id="registry" data-reveal>
           <div className="section-shell">
-            <div className="section-kicker"><span>04</span><p>VERIFY ONCHAIN</p></div>
+            <div className="section-kicker"><span>05</span><p>VERIFY ONCHAIN</p></div>
             <div className="registry-layout">
               <div><p className="eyebrow"><i /> CHECK EVERY ADDRESS</p><h2>FOLLOW THE<br />MONEY.</h2></div>
               <div className="registry-table">
@@ -244,6 +252,7 @@ export default function Home() {
             <div><strong>$ZAZU</strong><span>BUYBACK. BURN. REPEAT.</span></div>
           </div>
           <div className="footer-links">
+            {ZAZU.nftMintUrl ? <ExternalLink href={ZAZU.nftMintUrl}>Mint Zazu ↗</ExternalLink> : <a href="#mint">Zazu NFTs ↑</a>}
             {ZAZU.xUrl ? <ExternalLink href={ZAZU.xUrl}>Project X ↗</ExternalLink> : null}
             <ExternalLink href={ZAZU.instagramUrl}>Zazu Instagram ↗</ExternalLink>
             <ExternalLink href={ZAZU.tiktokUrl}>Zazu TikTok ↗</ExternalLink>

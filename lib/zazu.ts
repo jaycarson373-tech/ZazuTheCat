@@ -37,6 +37,8 @@ export const ZAZU = {
   tokenAddress,
   vaultAddress,
   chainId,
+  nftSupply: 1000,
+  nftMintUrl: safeUrl(process.env.NEXT_PUBLIC_NFT_MINT_URL),
   xUrl: safeUrl(process.env.NEXT_PUBLIC_X_URL),
   instagramUrl: "https://www.instagram.com/zazubabyman/",
   tiktokUrl: "https://www.tiktok.com/@zazubabyman_",
