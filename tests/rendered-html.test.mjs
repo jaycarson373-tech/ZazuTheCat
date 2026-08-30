@@ -37,6 +37,18 @@ test("renders the complete Zazu identity and forty-cat hero", async () => {
   assert.doesNotMatch(html, /BUYBACK \+ BURN/i);
 });
 
+test("renders the handmade 1,000-piece Zazu NFT collection without a dead mint link", async () => {
+  const html = await render();
+  assert.match(html, /THE ZAZU 1000/i);
+  assert.match(html, /1,000[\s\S]*ZAZUS[\s\S]*MADE BY HAND/i);
+  assert.match(html, /finite collection[\s\S]*1,000[\s\S]*custom handmade ZAZU NFTs/i);
+  assert.match(html, /SUPPLY[\s\S]*1,000/i);
+  assert.match(html, /PROCESS[\s\S]*HANDMADE/i);
+  assert.match(html, /40 PREVIEW FILES/i);
+  assert.match(html, /EXPLORE THE ZAZU FILES/i);
+  assert.doesNotMatch(html, /MINT A ZAZU ↗/i);
+});
+
 test("renders a zero-based mini dashboard, simple mechanism, and header actions", async () => {
   const html = await render();
   assert.match(html, /BUYBACK DASHBOARD/i);
