@@ -28,13 +28,14 @@ test("renders the complete Dog Wif Shiesty identity and forty-dog hero", async (
   assert.match(html, /DOG WIF SHIESTY/i);
   assert.match(html, /IN THE HOOD,[\s\S]*WE WEAR SHIESTYS/i);
   assert.match(html, /ROBINHOOD CHAIN(?:&#x27;|')S MASKED DOG/i);
-  assert.match(html, /THE_HOOD_CAM_001-040\.JPG/i);
+  assert.match(html, /THE_SHIESTY_PACK_001-040\.JPG/i);
   assert.match(html, /40 MASKS LOADED/i);
-  assert.match(html, /Forty dogs wearing different shiesty masks/i);
-  assert.match(html, /shiesty-logo\.png/i);
+  assert.match(html, /Forty colorful animals wearing different shiesty masks and accessories/i);
+  assert.match(html, /shiesty-logo\.jpg/i);
   assert.match(html, /shiesty-dog-wall\.png/i);
   assert.match(html, /shiesty-favicon\.png/i);
-  assert.match(html, /\/og\.png/i);
+  assert.match(html, /shiesty-banner\.jpg/i);
+  assert.match(html, /Official Dog Wif Shiesty banner/i);
 });
 
 test("explains the one-percent pool and community reward plan accurately", async () => {
