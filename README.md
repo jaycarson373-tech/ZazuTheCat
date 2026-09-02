@@ -2,7 +2,7 @@
 
 The internet's most locked-in cat, built on Robinhood Chain and powered by pons.
 
-This repository contains the Zazu site, a pons v1 creator-fee collector, a narrow Uniswap V3 adapter, the BuybackVault, a guarded Railway keeper, read-only public APIs, and an optional Supabase event mirror.
+This repository contains the Zazu site, the fixed 1,212-piece Zazu Cat NFT mint, a pons v1 creator-fee collector, a narrow Uniswap V3 adapter, the BuybackVault, a guarded Railway keeper, read-only public APIs, and an optional Supabase event mirror.
 
 ## Fee loop
 
@@ -31,6 +31,8 @@ This integration is for the active pons v1 WETH and Uniswap V3 path documented a
 | Area | Purpose |
 | --- | --- |
 | `app/`, `components/`, `public/` | Zazu site, lore archive, live zero-based dashboard, and public APIs |
+| `contracts/src/Zazu1212.sol` | Fixed 1,212-supply ERC-721 mint at 0.003 ETH |
+| `contracts/script/DeployZazu1212.s.sol` | Robinhood Chain deployment and verification script |
 | `contracts/src/PonsFeeCollector.sol` | Claims and routes the pons v1 creator share |
 | `contracts/src/PonsV3Adapter.sol` | Restricts swaps to WETH into ZAZU through the pinned router |
 | `contracts/src/BuybackVault.sol` | Bounds execution, accounts spend and burns, and emits receipts |
@@ -66,6 +68,8 @@ npm run vercel-build
 ## Deploy
 
 Copy-ready Vercel and Railway templates, contract order, Supabase SQL, and activation checks are in [DEPLOYMENT_ENV.md](DEPLOYMENT_ENV.md).
+
+The NFT contract and direct website mint have a separate copy-ready checklist in [docs/ZAZU_1212_MINT.md](docs/ZAZU_1212_MINT.md). Fund the isolated deployer with a 0.01 ETH buffer, pin and verify the final 1,212 metadata files, then run `npm run nft:deploy`. Vercel receives only the resulting public NFT contract address, never the deployer key.
 
 Keep all private keys on the service that needs them. Vercel receives no signer key. Railway uses one minimally funded keeper and one replica. The chain and `BuybackExecuted` events remain the source of truth; Supabase is only an optional query mirror.
 

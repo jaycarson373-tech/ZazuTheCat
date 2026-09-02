@@ -1,0 +1,12 @@
+{
+  "name": "Zazu Cat: Unrevealed",
+  "description": "One of 1,212 Zazu Cat collectibles on Robinhood Chain. The final artwork will be revealed from permanent collection metadata.",
+  "image": "https://www.zazucatrh.fun/zazu-avatar.png",
+  "external_url": "https://www.zazucatrh.fun/#mint",
+  "attributes": [
+    {
+      "trait_type": "Status",
+      "value": "Unrevealed"
+    }
+  ]
+}
