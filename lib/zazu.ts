@@ -21,6 +21,7 @@ function safeUrl(value: string | undefined) {
 }
 
 const tokenAddress = safeAddress(process.env.NEXT_PUBLIC_ZAZU_ADDRESS);
+const nftContractAddress = safeAddress(process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS);
 const vaultAddress = safeAddress(
   process.env.NEXT_PUBLIC_BUYBACK_VAULT_ADDRESS ||
     process.env.NEXT_PUBLIC_BURN_EXECUTOR_ADDRESS,
@@ -37,8 +38,13 @@ export const ZAZU = {
   tokenAddress,
   vaultAddress,
   chainId,
-  nftSupply: 1000,
-  nftMintUrl: safeUrl(process.env.NEXT_PUBLIC_NFT_MINT_URL),
+  nftSupply: 1212,
+  nftMintPriceEth: "0.003",
+  nftMaxPerTransaction: 12,
+  nftContractAddress,
+  nftRpcUrl:
+    safeUrl(process.env.NEXT_PUBLIC_ROBINHOOD_RPC_URL) ||
+    "https://rpc.mainnet.chain.robinhood.com/",
   xUrl: safeUrl(process.env.NEXT_PUBLIC_X_URL),
   instagramUrl: "https://www.instagram.com/zazubabyman/",
   tiktokUrl: "https://www.tiktok.com/@zazubabyman_",
@@ -53,5 +59,8 @@ export const ZAZU = {
     : explorerBase,
   vaultExplorerUrl: vaultAddress
     ? new URL(`/address/${vaultAddress}`, explorerBase).toString()
+    : explorerBase,
+  nftContractExplorerUrl: nftContractAddress
+    ? new URL(`/address/${nftContractAddress}`, explorerBase).toString()
     : explorerBase,
 };

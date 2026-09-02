@@ -50,7 +50,7 @@ function ExternalLink({
 }
 
 export default function Home() {
-  const hasRegistry = Boolean(ZAZU.tokenAddress || ZAZU.vaultAddress);
+  const hasRegistry = Boolean(ZAZU.tokenAddress || ZAZU.vaultAddress || ZAZU.nftContractAddress);
   const dashboardConfigured = Boolean(ZAZU.tokenAddress && ZAZU.vaultAddress);
 
   return (
@@ -102,11 +102,7 @@ export default function Home() {
           <p className="hero-dek">Creator fees buy ZAZU. ZAZU gets burned.</p>
 
           <div className="hero-actions">
-            {ZAZU.nftMintUrl ? (
-              <ExternalLink className="button button-dark" href={ZAZU.nftMintUrl}>MINT ZAZU NFTS ↗</ExternalLink>
-            ) : (
-              <a className="button button-dark" href="#mint">THE ZAZU 1000 ↓</a>
-            )}
+            <a className="button button-dark" href="#mint">MINT THE ZAZU 1212 ↓</a>
             <ExternalLink className="button button-neon" href={ZAZU.ponsUrl}>POWERED BY PONS ↗</ExternalLink>
             <a className="button button-outline" href="#mechanism">HOW IT WORKS ↓</a>
             {ZAZU.dexUrl ? (
@@ -151,12 +147,19 @@ export default function Home() {
 
       <div className="ticker" aria-hidden="true">
         <div>
-          <span>1,000 HANDMADE ZAZUS</span><b>✦</b><span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
-          <span>1,000 HANDMADE ZAZUS</span><b>✦</b><span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
+          <span>1,212 ZAZUS</span><b>✦</b><span>0.003 ETH</span><b>✦</b><span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
+          <span>1,212 ZAZUS</span><b>✦</b><span>0.003 ETH</span><b>✦</b><span>POWERED BY PONS</span><b>✦</b><span>CREATOR FEES IN</span><b>✦</b><span>BUYBACK LOOP</span><b>✦</b><span>ZAZU BOUGHT</span><b>✦</b><span>ZAZU BURNED</span><b>✦</b>
         </div>
       </div>
 
-      <NftMintSection mintUrl={ZAZU.nftMintUrl} supply={ZAZU.nftSupply} />
+      <NftMintSection
+        contractAddress={ZAZU.nftContractAddress}
+        explorerBase={ZAZU.explorerBase}
+        mintPriceEth={ZAZU.nftMintPriceEth}
+        rpcUrl={ZAZU.nftRpcUrl}
+        supply={ZAZU.nftSupply}
+        maxPerTransaction={ZAZU.nftMaxPerTransaction}
+      />
 
       <section className="dashboard-section" id="activity" data-reveal>
         <div className="section-shell">
@@ -238,6 +241,9 @@ export default function Home() {
                 {ZAZU.vaultAddress ? (
                   <div><span>BUYBACK VAULT</span><code>{ZAZU.vaultAddress}</code><CopyButton value={ZAZU.vaultAddress} compact /></div>
                 ) : null}
+                {ZAZU.nftContractAddress ? (
+                  <div><span>ZAZU 1212 NFT</span><code>{ZAZU.nftContractAddress}</code><ExternalLink href={ZAZU.nftContractExplorerUrl}>VIEW ↗</ExternalLink></div>
+                ) : null}
                 <div><span>CHAIN ID</span><code>{ZAZU.chainId}</code><ExternalLink href={ZAZU.explorerBase}>EXPLORER ↗</ExternalLink></div>
               </div>
             </div>
@@ -252,7 +258,7 @@ export default function Home() {
             <div><strong>$ZAZU</strong><span>BUYBACK. BURN. REPEAT.</span></div>
           </div>
           <div className="footer-links">
-            {ZAZU.nftMintUrl ? <ExternalLink href={ZAZU.nftMintUrl}>Mint Zazu ↗</ExternalLink> : <a href="#mint">Zazu NFTs ↑</a>}
+            <a href="#mint">Mint Zazu ↑</a>
             {ZAZU.xUrl ? <ExternalLink href={ZAZU.xUrl}>Project X ↗</ExternalLink> : null}
             <ExternalLink href={ZAZU.instagramUrl}>Zazu Instagram ↗</ExternalLink>
             <ExternalLink href={ZAZU.tiktokUrl}>Zazu TikTok ↗</ExternalLink>

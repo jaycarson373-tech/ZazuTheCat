@@ -12,15 +12,15 @@
 
 **Platform line:** POWERED BY PONS
 
-## The Zazu 1000
+## The Zazu 1212
 
-**Collection:** THE ZAZU 1000
+**Collection:** THE ZAZU 1212
 
-**Headline:** 1,000 ZAZUS. MADE BY HAND.
+**Headline:** 1,212 ZAZUS. ONE ARCHIVE.
 
-A finite collection of 1,000 custom handmade ZAZU NFTs. Every file remixes the original stare into its own strange little universe.
+A fixed collection of 1,212 Zazu Cat collectibles on Robinhood Chain. Mint directly from your wallet at 0.003 ETH each.
 
-Use a live mint button only when it points to the verified collection mint. Do not invent mint totals, price, rarity, utility, or sold-out claims.
+The site reads mint totals and sale status directly from the verified collection contract. Do not invent rarity, utility, or sold-out claims.
 
 ## Zazu Files
 

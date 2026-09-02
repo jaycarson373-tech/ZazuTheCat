@@ -37,16 +37,16 @@ test("renders the complete Zazu identity and forty-cat hero", async () => {
   assert.doesNotMatch(html, /BUYBACK \+ BURN/i);
 });
 
-test("renders the handmade 1,000-piece Zazu NFT collection without a dead mint link", async () => {
+test("renders the fixed 1,212-piece Zazu NFT mint without a dead link", async () => {
   const html = await render();
-  assert.match(html, /THE ZAZU 1000/i);
-  assert.match(html, /1,000[\s\S]*ZAZUS[\s\S]*MADE BY HAND/i);
-  assert.match(html, /finite collection[\s\S]*1,000[\s\S]*custom handmade ZAZU NFTs/i);
-  assert.match(html, /SUPPLY[\s\S]*1,000/i);
-  assert.match(html, /PROCESS[\s\S]*HANDMADE/i);
-  assert.match(html, /40 PREVIEW FILES/i);
+  assert.match(html, /THE ZAZU 1212/i);
+  assert.match(html, /1,212[\s\S]*ZAZUS[\s\S]*ONE ARCHIVE/i);
+  assert.match(html, /fixed collection[\s\S]*1,212[\s\S]*Zazu Cat collectibles/i);
+  assert.match(html, /SUPPLY[\s\S]*1,212/i);
+  assert.match(html, /PRICE[\s\S]*0\.003 ETH/i);
+  assert.match(html, /40 ARCHIVE PREVIEWS/i);
   assert.match(html, /EXPLORE THE ZAZU FILES/i);
-  assert.doesNotMatch(html, /MINT A ZAZU ↗/i);
+  assert.doesNotMatch(html, /CONTRACT READY TO DEPLOY/i);
 });
 
 test("renders a zero-based mini dashboard, simple mechanism, and header actions", async () => {
