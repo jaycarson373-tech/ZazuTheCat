@@ -1,33 +1,29 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : "http://localhost:3000";
-
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || productionUrl,
+    process.env.NEXT_PUBLIC_SITE_URL || "https://zazu-still-staring.vercel.app",
   ),
-  title: "$SHIESTY | Dog Wif Shiesty",
-  description: "In the hood, we wear shiestys. A masked community meme on Robinhood Chain, powered by Pons.",
+  title: "$ZAZU | The Internet's Most Locked-In Cat",
+  description: "Meet The ZAZU 1000, a custom handmade NFT collection from the internet's most locked-in cat, alongside transparent buybacks and burns on Robinhood Chain.",
   icons: {
-    icon: "/shiesty-favicon.png?v=2",
-    shortcut: "/shiesty-favicon.png?v=2",
-    apple: "/shiesty-apple-touch-icon.png?v=2",
+    icon: "/zazu-favicon.png?v=2",
+    shortcut: "/zazu-favicon.png?v=2",
+    apple: "/zazu-apple-touch-icon.png?v=2",
   },
   openGraph: {
-    title: "$SHIESTY | Dog Wif Shiesty",
-    description: "In the hood, we wear shiestys. The creator share goes back to the community.",
+    title: "$ZAZU | The Internet's Most Locked-In Cat",
+    description: "The ZAZU 1000 is a custom handmade NFT collection, backed by transparent ZAZU buybacks and burns on Robinhood Chain.",
     type: "website",
-    siteName: "Dog Wif Shiesty",
-    images: [{ url: "/shiesty-banner.jpg", width: 1280, height: 426, alt: "Dog Wif Shiesty, the masked dog crew of Robinhood Chain" }],
+    siteName: "Zazu",
+    images: [{ url: "/og.png", width: 1731, height: 909, alt: "$ZAZU, the internet's most locked-in cat" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "$SHIESTY | Dog Wif Shiesty",
-    description: "In the hood, we wear shiestys. The creator share goes back to the community.",
-    images: ["/shiesty-banner.jpg"],
+    title: "$ZAZU | The Internet's Most Locked-In Cat",
+    description: "The ZAZU 1000 is a custom handmade NFT collection, backed by transparent ZAZU buybacks and burns on Robinhood Chain.",
+    images: ["/og.png"],
   },
 };
 
