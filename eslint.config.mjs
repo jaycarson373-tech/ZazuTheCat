@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     "contracts/cache/**",
     "contracts/out/**",
     "contracts/broadcast/**",
+    "shiesty-bot/**",
     "next-env.d.ts",
   ]),
 ]);
