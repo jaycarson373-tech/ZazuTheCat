@@ -70,7 +70,7 @@ export default function Home() {
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Dog Wif Shiesty home">
           <span className="brand-avatar">
-            <Image src="/shiesty-logo.jpg" alt="" fill priority sizes="48px" />
+            <Image src="/shiesty-logo.png" alt="" fill priority sizes="48px" />
           </span>
           <span className="brand-copy">
             <strong>DOG WIF SHIESTY</strong>
@@ -128,16 +128,16 @@ export default function Home() {
           ) : null}
         </div>
 
-        <div className="hero-art" aria-label="Forty colorful animals wearing different shiesty masks and accessories">
+        <div className="hero-art" aria-label="Forty dogs wearing different shiesty masks">
           <div className="hero-window">
             <div className="window-title">
-              <span>THE_SHIESTY_PACK_001-040.JPG</span>
+              <span>THE_HOOD_CAM_001-040.JPG</span>
               <span>40 MASKS LOADED</span>
             </div>
             <div className="hero-photo">
               <Image
                 src="/shiesty-dog-wall.png"
-                alt="A colorful wall of forty masked characters, mainly dogs, wearing different shiestys and accessories"
+                alt="A wall of forty original dogs wearing black and neon shiesty masks"
                 fill
                 priority
                 sizes="(max-width: 820px) 94vw, 58vw"
@@ -167,7 +167,7 @@ export default function Home() {
           <div className="section-kicker section-kicker-light"><span>01</span><p>WELCOME TO THE HOOD</p></div>
           <div className="hood-layout">
             <div className="hood-logo-card">
-              <Image src="/shiesty-logo.jpg" alt="Dog Wif Shiesty wearing a black mask and gold chain on a neon background" fill sizes="(max-width: 760px) 88vw, 42vw" />
+              <Image src="/shiesty-logo.png" alt="Dog Wif Shiesty wearing a neon-lined mask" fill sizes="(max-width: 760px) 88vw, 42vw" />
               <span>MASK ON</span>
             </div>
             <div className="hood-copy">
@@ -248,21 +248,10 @@ export default function Home() {
         </section>
       ) : null}
 
-      <section className="official-banner-section" aria-label="Official Dog Wif Shiesty banner" data-reveal>
-        <div className="official-banner-frame">
-          <Image
-            src="/shiesty-banner.jpg"
-            alt="Dog Wif Shiesty banner featuring a crew of masked dogs"
-            fill
-            sizes="100vw"
-          />
-        </div>
-      </section>
-
       <footer className="site-footer">
         <div className="footer-main">
           <div className="footer-brand">
-            <span><Image src="/shiesty-logo.jpg" alt="" fill sizes="58px" /></span>
+            <span><Image src="/shiesty-logo.png" alt="" fill sizes="58px" /></span>
             <div><strong>$SHIESTY</strong><small>CREATOR SHARE BACK TO THE HOOD.</small></div>
           </div>
           <div className="footer-links">
