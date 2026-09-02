@@ -2,13 +2,19 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 let renderedPage;
+let renderedPolicy;
+
+async function loadWorker() {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+  return worker;
+}
 
 async function render() {
   if (!renderedPage) {
     renderedPage = (async () => {
-      const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-      workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-      const { default: worker } = await import(workerUrl.href);
+      const worker = await loadWorker();
       const response = await worker.fetch(
         new Request("http://localhost/", { headers: { accept: "text/html" } }),
         { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
@@ -20,6 +26,22 @@ async function render() {
     })();
   }
   return renderedPage;
+}
+
+async function renderPolicy() {
+  if (!renderedPolicy) {
+    renderedPolicy = (async () => {
+      const worker = await loadWorker();
+      const response = await worker.fetch(
+        new Request("http://localhost/bot-policy", { headers: { accept: "text/html" } }),
+        { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+        { waitUntil() {}, passThroughOnException() {} },
+      );
+      assert.equal(response.status, 200);
+      return response.text();
+    })();
+  }
+  return renderedPolicy;
 }
 
 test("renders the complete Dog Wif Shiesty identity and forty-dog hero", async () => {
@@ -57,6 +79,7 @@ test("contains working navigation and no old NFT or buyback brand copy", async (
   assert.match(html, /href="#hood"[^>]*>The hood<\/a>/i);
   assert.match(html, /href="#community"[^>]*>1% back<\/a>/i);
   assert.match(html, /href="#how"[^>]*>How it works<\/a>/i);
+  assert.match(html, /href="#bot"[^>]*>Mask bot<\/a>/i);
   assert.match(html, /https:\/\/pons\.family\/launchpad/i);
   assert.match(html, /https:\/\/robinhoodchain\.blockscout\.com\//i);
   assert.match(html, /header-chip header-chip-placeholder[^>]*>CA<\/button>/i);
@@ -66,5 +89,29 @@ test("contains working navigation and no old NFT or buyback brand copy", async (
   assert.doesNotMatch(html, /BUYBACK|BURNED|BURN DESTINATION|ONCHAIN RECEIPTS/i);
   assert.doesNotMatch(html, /Timon|Smudge|Tutu|Rigby|Dino Cat|dinocattutu|iamrigbycat|timon\.surik/i);
   assert.doesNotMatch(html, /Solana|pump\.fun|jup\.ag|Jupiter/i);
+  assert.doesNotMatch(html, /—/);
+});
+
+test("explains the opt-in Shiesty profile picture bot without a dead CTA", async () => {
+  const html = await render();
+  assert.match(html, /THE SHIESTY MACHINE/i);
+  assert.match(html, /TAG IT\.[\s\S]*GET[\s\S]*SHIESTY\./i);
+  assert.match(html, /shiesty me/i);
+  assert.match(html, /PFP LOADED/i);
+  assert.match(html, /MASK FITTED/i);
+  assert.match(html, /ONE IMAGE REPLY PER REQUEST/i);
+  assert.match(html, /REPLY[\s\S]*STOP[\s\S]*TO OPT OUT/i);
+  assert.match(html, /href="\/bot-policy"[^>]*>PRIVACY \+ TERMS/i);
+  assert.doesNotMatch(html, /TRY THE BOT ON X/i);
+});
+
+test("publishes the bot privacy, retention, opt-out, and use policy", async () => {
+  const html = await renderPolicy();
+  assert.match(html, /Shiesty PFP Bot Policy/i);
+  assert.match(html, /WHAT IT USES/i);
+  assert.match(html, /Temporary source and output files are deleted/i);
+  assert.match(html, /Generated images are not stored in the bot database/i);
+  assert.match(html, /STOP[^<]*to opt out/i);
+  assert.match(html, /Do not use the bot to impersonate, harass, deceive, or target another person/i);
   assert.doesNotMatch(html, /—/);
 });
