@@ -44,29 +44,6 @@ const flowSteps = [
   },
 ] as const;
 
-const botSteps = [
-  {
-    number: "01",
-    title: "TAG THE BOT",
-    copy: "Mention or reply to the bot with the exact words \u201cshiesty me.\u201d",
-  },
-  {
-    number: "02",
-    title: "PFP LOADED",
-    copy: "It reads the public profile picture attached to your X account.",
-  },
-  {
-    number: "03",
-    title: "MASK FITTED",
-    copy: "The built-in edit adds one clean black shiesty and preserves the original identity and background.",
-  },
-  {
-    number: "04",
-    title: "REPLY DROPPED",
-    copy: "One request gets one AI-labeled image reply, ready to save as your new PFP.",
-  },
-] as const;
-
 function ExternalLink({
   href,
   children,
@@ -84,10 +61,6 @@ function ExternalLink({
 }
 
 export default function Home() {
-  const botCommand = SHIESTY.botUsername
-    ? `@${SHIESTY.botUsername} shiesty me`
-    : 'TAG THE BOT + \u201cSHIESTY ME\u201d';
-
   return (
     <main>
       <MotionController />
@@ -109,7 +82,6 @@ export default function Home() {
           <a href="#hood">The hood</a>
           <a href="#community">1% back</a>
           <a href="#how">How it works</a>
-          <a href="#bot">Mask bot</a>
         </nav>
 
         <div className="header-actions">
@@ -253,63 +225,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bot-section" id="bot" data-reveal>
-        <div className="section-shell">
-          <div className="section-kicker section-kicker-light"><span>04</span><p>THE SHIESTY MACHINE</p></div>
-          <div className="bot-layout">
-            <div className="bot-copy">
-              <p className="eyebrow eyebrow-light"><i /> YOUR PFP. MASK ON.</p>
-              <h2>TAG IT.<br />GET<br />SHIESTY.</h2>
-              <p>Ask once and the bot fits a signature black shiesty to your public X profile picture, then replies with the finished image.</p>
-              <div className="bot-command"><span>TYPE THIS</span><code>{botCommand}</code></div>
-              {SHIESTY.botUrl ? (
-                <ExternalLink className="button button-bot" href={SHIESTY.botUrl}>TRY THE BOT ON X ↗</ExternalLink>
-              ) : (
-                <span className="bot-optin-badge">DIRECT REQUESTS ONLY</span>
-              )}
-            </div>
-
-            <div className="bot-demo" aria-label="Profile picture transformation preview">
-              <div className="bot-demo-title"><span>SHIESTY_PFP_MACHINE</span><b>AI EDIT</b></div>
-              <div className="bot-transform">
-                <article className="bot-avatar-card">
-                  <span className="bot-card-label">YOUR PFP</span>
-                  <div className="bot-avatar-placeholder" aria-hidden="true"><i /><b /></div>
-                  <small>PUBLIC IMAGE IN</small>
-                </article>
-                <div className="bot-arrow" aria-hidden="true"><span>→</span><small>MASK ON</small></div>
-                <article className="bot-avatar-card bot-avatar-card-result">
-                  <span className="bot-card-label">SHIESTY PFP</span>
-                  <div className="bot-avatar-image">
-                    <Image src="/shiesty-logo.jpg" alt="Dog wearing a fitted black shiesty on a neon yellow background" fill sizes="(max-width: 620px) 42vw, 260px" />
-                  </div>
-                  <small>IMAGE REPLY OUT</small>
-                </article>
-              </div>
-              <div className="bot-terminal" aria-hidden="true">
-                <div><span>01</span><p>PFP LOADED</p><b>✓</b></div>
-                <div><span>02</span><p>SHIESTY FITTED</p><b>✓</b></div>
-                <div><span>03</span><p>REPLY READY</p><b className="bot-terminal-pulse">●</b></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bot-steps">
-            {botSteps.map((step) => (
-              <article key={step.number}>
-                <span>{step.number}</span>
-                <h3>{step.title}</h3>
-                <p>{step.copy}</p>
-              </article>
-            ))}
-          </div>
-          <p className="bot-safety">OPT-IN ONLY. ONE IMAGE REPLY PER REQUEST. REPLY <strong>STOP</strong> TO OPT OUT. <a href="/bot-policy">PRIVACY + TERMS ↗</a></p>
-        </div>
-      </section>
-
       <section className="code-section" data-reveal>
         <div className="section-shell">
-          <div className="section-kicker"><span>05</span><p>THE SHIESTY CODE</p></div>
+          <div className="section-kicker"><span>04</span><p>THE SHIESTY CODE</p></div>
           <div className="code-grid">
             <article><span>01</span><h2>MASK<br />ON.</h2><p>Stay locked in. Protect the pack.</p></article>
             <article><span>02</span><h2>MEMES<br />UP.</h2><p>Make it funny. Make it travel.</p></article>
@@ -352,7 +270,6 @@ export default function Home() {
             <ExternalLink href={SHIESTY.ponsUrl}>Pons ↗</ExternalLink>
             {SHIESTY.dexUrl ? <ExternalLink href={SHIESTY.dexUrl}>Trade ↗</ExternalLink> : null}
             <ExternalLink href={SHIESTY.explorerBase}>Explorer ↗</ExternalLink>
-            <a href="/bot-policy">Bot policy ↗</a>
           </div>
         </div>
         <div className="footer-legal">

@@ -35,7 +35,6 @@
     "build",
     "db",
     "examples",
-    "shiesty-bot",
     "worker",
     "drizzle.config.ts",
     "vite.config.ts"
