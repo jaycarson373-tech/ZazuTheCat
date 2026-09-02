@@ -12,22 +12,22 @@ export const metadata: Metadata = {
   title: "$SHIESTY | Dog Wif Shiesty",
   description: "In the hood, we wear shiestys. A masked community meme on Robinhood Chain, powered by Pons.",
   icons: {
-    icon: "/shiesty-favicon.png?v=1",
-    shortcut: "/shiesty-favicon.png?v=1",
-    apple: "/shiesty-apple-touch-icon.png?v=1",
+    icon: "/shiesty-favicon.png?v=2",
+    shortcut: "/shiesty-favicon.png?v=2",
+    apple: "/shiesty-apple-touch-icon.png?v=2",
   },
   openGraph: {
     title: "$SHIESTY | Dog Wif Shiesty",
     description: "In the hood, we wear shiestys. The creator share goes back to the community.",
     type: "website",
     siteName: "Dog Wif Shiesty",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Dog Wif Shiesty, the masked dog of Robinhood Chain" }],
+    images: [{ url: "/shiesty-banner.jpg", width: 1280, height: 426, alt: "Dog Wif Shiesty, the masked dog crew of Robinhood Chain" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "$SHIESTY | Dog Wif Shiesty",
     description: "In the hood, we wear shiestys. The creator share goes back to the community.",
-    images: ["/og.png"],
+    images: ["/shiesty-banner.jpg"],
   },
 };
 
