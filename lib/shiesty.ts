@@ -20,11 +20,7 @@ function safeUrl(value: string | undefined) {
   }
 }
 
-const tokenAddress = safeAddress(process.env.NEXT_PUBLIC_ZAZU_ADDRESS);
-const vaultAddress = safeAddress(
-  process.env.NEXT_PUBLIC_BUYBACK_VAULT_ADDRESS ||
-    process.env.NEXT_PUBLIC_BURN_EXECUTOR_ADDRESS,
-);
+const tokenAddress = safeAddress(process.env.NEXT_PUBLIC_SHIESTY_ADDRESS);
 const explorerBase =
   safeUrl(process.env.NEXT_PUBLIC_EXPLORER_URL) ||
   "https://robinhoodchain.blockscout.com/";
@@ -33,16 +29,10 @@ const chainId = Number.isSafeInteger(configuredChainId) && configuredChainId > 0
   ? configuredChainId
   : 4663;
 
-export const ZAZU = {
+export const SHIESTY = {
   tokenAddress,
-  vaultAddress,
   chainId,
-  nftSupply: 1000,
-  nftMintUrl: safeUrl(process.env.NEXT_PUBLIC_NFT_MINT_URL),
   xUrl: safeUrl(process.env.NEXT_PUBLIC_X_URL),
-  instagramUrl: "https://www.instagram.com/zazubabyman/",
-  tiktokUrl: "https://www.tiktok.com/@zazubabyman_",
-  linktreeUrl: "https://linktr.ee/zazu_cat",
   ponsUrl:
     safeUrl(process.env.NEXT_PUBLIC_PONS_URL) ||
     "https://pons.family/launchpad",
@@ -50,8 +40,5 @@ export const ZAZU = {
   explorerBase,
   tokenExplorerUrl: tokenAddress
     ? new URL(`/token/${tokenAddress}`, explorerBase).toString()
-    : explorerBase,
-  vaultExplorerUrl: vaultAddress
-    ? new URL(`/address/${vaultAddress}`, explorerBase).toString()
     : explorerBase,
 };
