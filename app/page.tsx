@@ -14,8 +14,8 @@ export default function Home() {
           <span>TESLLAMA</span>
         </a>
         <nav className="desktop-nav" aria-label="Main navigation">
-          <a href="#models">Vehicles</a>
-          <a href="#lore">Lore</a>
+          <a href="#models">Models</a>
+          <a href="#lore">The story</a>
           <Link href="/shop">Shop Tesllamas</Link>
         </nav>
         <div className="header-tools">
@@ -24,7 +24,7 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="brand-ticker" aria-label="Tesllama project information">
+      <div className="brand-ticker" aria-label="TESLLAMA · Paired with Tesla (TSLA) · On Stonk" tabIndex={0}>
         <div>
           <span>TESLLAMA</span><i>COMMUNITY CONCEPT</i><span>TESLLAMA</span><i>PAIRED WITH TESLA (TSLA)</i><span>TESLLAMA</span><i>ON STONK</i>
           <span aria-hidden="true">TESLLAMA</span><i aria-hidden="true">COMMUNITY CONCEPT</i><span aria-hidden="true">TESLLAMA</span><i aria-hidden="true">PAIRED WITH TESLA (TSLA)</i><span aria-hidden="true">TESLLAMA</span><i aria-hidden="true">ON STONK</i>
@@ -35,21 +35,15 @@ export default function Home() {
         <ModelCarousel />
       </section>
 
-      <section className="tesllama-facts" aria-label="Project information">
-        <div><span>01</span><p>Three Tesllama vehicle concepts, each with its own body style and colorway.</p></div>
-        <div><span>02</span><p>Created as a community meme and paired with Tesla (TSLA) on Stonk.</p></div>
-        <div><span>03</span><p>Select a model, then enter the shop to follow the collection release.</p></div>
-      </section>
-
       <section className="tesllama-lore" id="lore" aria-labelledby="lore-title">
         <div className="lore-image">
           <Image src="/tesla-logo.jpg" alt="The original white Tesllama vehicle concept" width={1280} height={1280} sizes="(max-width: 800px) 92vw, 45vw" />
         </div>
         <div className="lore-copy">
           <p className="section-label">COMMUNITY LORE</p>
-          <h2 id="lore-title">The meeting that changed transportation.</h2>
+          <h2 id="lore-title">An unlikely merger.</h2>
           <p>According to Tesllama lore, Elon Musk met the leader of the llamas to discuss the future of movement. The negotiations were brief. Tesla brought the engineering. The llamas brought everything else.</p>
-          <p>The merger produced three prototypes, one questionably practical silhouette, and a vehicle category the world was not prepared to insure.</p>
+          <p>Three models. Six finishes. One vehicle category the world was not prepared to insure.</p>
           <Link href="/shop">Shop Tesllamas</Link>
         </div>
       </section>

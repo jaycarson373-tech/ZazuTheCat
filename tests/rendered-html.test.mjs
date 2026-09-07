@@ -26,13 +26,13 @@ test("renders the Tesllama model range and navigation", async () => {
   const html = await render();
   assert.match(html, /<title>TESLLAMA \| Community Vehicle Concepts<\/title>/i);
   assert.match(html, /TESLLAMA S/i);
-  assert.match(html, /TESLLAMA X/i);
-  assert.match(html, /TESLLAMA CT/i);
+  assert.match(html, />Model X<\/button>/i);
+  assert.match(html, />Model CT<\/button>/i);
   assert.match(html, /Pearl White/i);
   assert.match(html, /Obsidian/i);
-  assert.match(html, /Lunar Silver/i);
+  assert.match(html, /aria-label="Play slideshow"/i);
   assert.match(html, /Shop Tesllamas/i);
-  assert.match(html, />Stonk<\/a>/i);
+  assert.match(html, />TESLLAMA on Stonk<\/a>/i);
   assert.doesNotMatch(html, /MARKET LAUNCH|Electric\. Fluffy|Built different/i);
 });
 
