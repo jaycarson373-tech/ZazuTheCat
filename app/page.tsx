@@ -1,37 +1,64 @@
 import Image from "next/image";
+import Link from "next/link";
+import { ModelCarousel } from "@/components/ModelCarousel";
+import { SiteMenu } from "@/components/SiteMenu";
+
 const stonkUrl = process.env.NEXT_PUBLIC_STONK_URL || "https://www.stonkfun.xyz";
+
 export default function Home() {
   return (
-    <main className="tesla-site" id="top">
-      <header className="tesla-header">
-        <a className="tesla-brand" href="#top" aria-label="Tesla home"><Image src="/tesla-logo.jpg" alt="" width={48} height={48} priority /><span>TESLA</span></a>
-        <a className="tesla-nav-link" href={stonkUrl} target="_blank" rel="noopener noreferrer">Stonk</a>
+    <main className="tesllama-site" id="top">
+      <header className="tesllama-header">
+        <a className="tesllama-brand" href="#top" aria-label="Tesllama home">
+          <Image src="/tesla-logo.jpg" alt="" width={40} height={40} priority />
+          <span>TESLLAMA</span>
+        </a>
+        <nav className="desktop-nav" aria-label="Main navigation">
+          <a href="#models">Vehicles</a>
+          <a href="#lore">Lore</a>
+          <Link href="/shop">Shop Tesllamas</Link>
+        </nav>
+        <div className="header-tools">
+          <a href={stonkUrl} target="_blank" rel="noopener noreferrer">Stonk</a>
+          <SiteMenu stonkUrl={stonkUrl} />
+        </div>
       </header>
-      <section className="tesla-hero" aria-labelledby="tesla-title">
-        <div className="tesla-banner"><Image src="/tesla-banner.jpg" alt="Tesllama banner featuring a llama Tesla in red lighting" width={1280} height={426} priority sizes="100vw" /></div>
-        <div className="tesla-intro">
-          <div className="tesla-heading">
-            <p className="tesla-status">MARKET LAUNCH</p>
-            <h1 id="tesla-title">TESLA</h1>
-          </div>
-          <dl className="tesla-details">
-            <div><dt>Launch platform</dt><dd>Stonk</dd></div>
-            <div><dt>Trading pair</dt><dd>Tesla <span>(TSLA)</span></dd></div>
-          </dl>
-          <a className="tesla-cta" href={stonkUrl} target="_blank" rel="noopener noreferrer">View on Stonk</a>
-        </div>
-      </section>
-      <section className="tesla-lore" aria-labelledby="lore-title">
+
+      <div className="brand-ticker" aria-label="Tesllama project information">
         <div>
-          <p className="tesla-status">COMMUNITY LORE</p>
-          <h2 id="lore-title">The Tesllama origin</h2>
+          <span>TESLLAMA</span><i>COMMUNITY CONCEPT</i><span>TESLLAMA</span><i>PAIRED WITH TESLA (TSLA)</i><span>TESLLAMA</span><i>ON STONK</i>
+          <span aria-hidden="true">TESLLAMA</span><i aria-hidden="true">COMMUNITY CONCEPT</i><span aria-hidden="true">TESLLAMA</span><i aria-hidden="true">PAIRED WITH TESLA (TSLA)</i><span aria-hidden="true">TESLLAMA</span><i aria-hidden="true">ON STONK</i>
         </div>
-        <div className="tesla-lore-copy">
-          <p>In the community&apos;s fictional origin story, Elon Musk meets the leader of the llamas. The discussion ends with one agreement: unite Tesla engineering with llama identity.</p>
-          <p>The result is Tesllama. A merger in the lore, brought to life in the artwork.</p>
+      </div>
+
+      <section id="models" aria-label="Tesllama models">
+        <ModelCarousel />
+      </section>
+
+      <section className="tesllama-facts" aria-label="Project information">
+        <div><span>01</span><p>Three Tesllama vehicle concepts, each with its own body style and colorway.</p></div>
+        <div><span>02</span><p>Created as a community meme and paired with Tesla (TSLA) on Stonk.</p></div>
+        <div><span>03</span><p>Select a model, then enter the shop to follow the collection release.</p></div>
+      </section>
+
+      <section className="tesllama-lore" id="lore" aria-labelledby="lore-title">
+        <div className="lore-image">
+          <Image src="/tesla-logo.jpg" alt="The original white Tesllama vehicle concept" width={1280} height={1280} sizes="(max-width: 800px) 92vw, 45vw" />
+        </div>
+        <div className="lore-copy">
+          <p className="section-label">COMMUNITY LORE</p>
+          <h2 id="lore-title">The meeting that changed transportation.</h2>
+          <p>According to Tesllama lore, Elon Musk met the leader of the llamas to discuss the future of movement. The negotiations were brief. Tesla brought the engineering. The llamas brought everything else.</p>
+          <p>The merger produced three prototypes, one questionably practical silhouette, and a vehicle category the world was not prepared to insure.</p>
+          <Link href="/shop">Shop Tesllamas</Link>
         </div>
       </section>
-      <footer className="tesla-footer"><span>TESLA</span><p>A community meme coin. Not affiliated with Tesla, Inc.</p><a href="#top">Back to top</a></footer>
+
+      <footer className="tesllama-footer">
+        <strong>TESLLAMA</strong>
+        <p>A community meme project. Not affiliated with Tesla, Inc. or Elon Musk.</p>
+        <a href="#top">Back to top</a>
+      </footer>
     </main>
   );
 }
