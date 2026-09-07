@@ -8,12 +8,17 @@ export default function Home() {
         <a className="tesla-nav-link" href={stonkUrl} target="_blank" rel="noopener noreferrer">Stonk</a>
       </header>
       <section className="tesla-hero" aria-labelledby="tesla-title">
-        <div className="tesla-banner"><Image src="/tesla-banner.jpg" alt="Tesllama banner featuring a fluffy llama Tesla in red neon light" width={1280} height={426} priority sizes="100vw" /></div>
+        <div className="tesla-banner"><Image src="/tesla-banner.jpg" alt="Tesllama banner featuring a llama Tesla in red lighting" width={1280} height={426} priority sizes="100vw" /></div>
         <div className="tesla-intro">
-          <p className="tesla-status"><span aria-hidden="true" /> LAUNCHED ON STONK</p>
-          <h1 id="tesla-title">TESLA</h1>
-          <p className="tesla-pair">Paired with <strong>Tesla</strong><span>TSLA</span></p>
-          <a className="tesla-cta" href={stonkUrl} target="_blank" rel="noopener noreferrer">Explore on Stonk</a>
+          <div className="tesla-heading">
+            <p className="tesla-status">MARKET LAUNCH</p>
+            <h1 id="tesla-title">TESLA</h1>
+          </div>
+          <dl className="tesla-details">
+            <div><dt>Launch platform</dt><dd>Stonk</dd></div>
+            <div><dt>Trading pair</dt><dd>Tesla <span>(TSLA)</span></dd></div>
+          </dl>
+          <a className="tesla-cta" href={stonkUrl} target="_blank" rel="noopener noreferrer">View on Stonk</a>
         </div>
       </section>
       <footer className="tesla-footer"><span>TESLA</span><p>A community meme coin. Not affiliated with Tesla, Inc.</p><a href="#top">Back to top</a></footer>
