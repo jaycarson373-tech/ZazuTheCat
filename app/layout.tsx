@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || "https://zazu-still-staring.vercel.app",
   ),
   title: "Tesla | Launched on Stonk",
-  description: "Electric. Fluffy. Built different. Tesla is launched on Stonk and paired with Tesla (TSLA).",
+  description: "Tesla is launched on Stonk and paired with Tesla (TSLA).",
   icons: {
     icon: "/tesla-logo.jpg",
     shortcut: "/tesla-logo.jpg",
