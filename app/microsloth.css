@@ -1,0 +1,120 @@
+body:has(.sloth-desktop) { background: #5398d2; }
+body:has(.sloth-desktop)::before { display: none; }
+.sloth-desktop { --navy:#123a69; --cream:#f9f9f4; color:#183653; min-height:100svh; font-family:Arial,Helvetica,sans-serif; background:radial-gradient(ellipse at 80% 20%,#93c7eb 0,transparent 45%),linear-gradient(145deg,#478bcc 0%,#79b5e0 55%,#458dc9 100%); position:relative; display:flex; flex-direction:column; }
+.sloth-desktop::selection { background:#c4dbec; color:#123a69; }
+.sloth-desktop button { cursor:pointer; }
+.sloth-desktop :is(button,a):focus-visible { outline:3px solid #edb24b; outline-offset:3px; }
+.os-header { height:78px; padding:0 3%; display:flex; align-items:center; justify-content:space-between; gap:20px; border-bottom:1px solid #ffffff40; color:#fff; }
+.sloth-brand { display:flex; align-items:center; gap:11px; font-size:24px; letter-spacing:-1px; font-weight:600; }
+.sloth-mark { width:23px; height:23px; display:grid; grid-template-columns:1fr 1fr; gap:3px; flex-shrink:0; }
+.sloth-mark i { display:block; background:currentColor; }
+.brand-inc { font-weight:400; font-size:11px; letter-spacing:0; align-self:flex-end; margin-bottom:3px; opacity:.75; }
+.os-edition { font-size:11px; letter-spacing:.12em; }
+.os-edition span { padding-left:15px; opacity:.7; font-size:9px; }
+.connection { display:flex; gap:8px; align-items:center; font-size:11px; color:#f2f8ff; }
+.connection i,.status-dot,.window-status i,.tray-status i { display:inline-block; width:6px; height:6px; background:#88b58b; border-radius:50%; }
+.connection i { background:#caefd2; }
+.desktop-workspace { position:relative; flex:1; padding:44px 5% 100px 150px; min-height:740px; }
+.desktop-shortcuts { position:absolute; left:28px; top:35px; display:grid; gap:24px; width:92px; z-index:2; }
+.desktop-shortcuts button { display:flex; flex-direction:column; align-items:center; gap:9px; padding:9px 4px; border:1px solid transparent; background:transparent; border-radius:5px; color:#fff; font-size:11px; text-shadow:0 1px 2px #346692; }
+.desktop-shortcuts button:hover,.desktop-shortcuts button[aria-pressed=true] { background:#ffffff19; border-color:#ffffff50; }
+.desktop-app-icon { width:45px; height:45px; padding:8px; display:block; background:linear-gradient(145deg,#ffffff,#dcecf7); border:1px solid #fff; border-radius:9px; box-shadow:0 3px 8px #1747762e; color:#3779b4; }
+.desktop-app-icon svg,.window-titlebar svg,.taskbar-app svg,.utility-icon svg,.notice-icon svg,.start-launcher svg { width:100%; height:100%; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.icon-merger { background:linear-gradient(145deg,#fffbd7,#e8d99d); color:#9b7836; }
+.icon-updates { background:linear-gradient(145deg,#def0ea,#b7d5cf); color:#4a7d70; }
+.icon-token { background:linear-gradient(145deg,#dfd9f6,#babde6); color:#696197; }
+.wallpaper-word { position:absolute; left:20%; bottom:7%; color:#ffffff12; font-size:clamp(50px,8vw,130px); font-weight:600; letter-spacing:-5px; pointer-events:none; }
+.os-window { position:relative; z-index:1; width:100%; max-width:1240px; margin:0 auto; background:var(--cream); border:1px solid #ecf4fd; border-radius:9px; box-shadow:0 28px 65px #184e7938,0 2px 4px #1a527e33; overflow:hidden; }
+.os-window.is-maximized { position:fixed; inset:12px 12px 69px; width:auto; max-width:none; margin:0; overflow:auto; z-index:4; }
+.window-titlebar { height:43px; padding-left:16px; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(#fcfdfe,#e7edf2); border-bottom:1px solid #d0dbe4; }
+.window-titlebar>span { display:flex; align-items:center; gap:8px; font-size:11px; color:#36546c; }
+.window-titlebar>span svg { width:17px; height:17px; }
+.window-controls { height:100%; display:flex; }
+.window-controls button { width:44px; background:transparent; border:0; border-left:1px solid #d6e0e8; color:#597189; padding:14px; }
+.window-controls button:hover { background:#d8e5ee; }
+.window-controls button:last-child:hover { background:#b4493c; color:#fff; }
+.window-controls svg { stroke-width:1.2; }
+.window-toolbar { display:flex; justify-content:space-between; gap:10px; font-size:10px; color:#81909a; padding:13px 23px; border-bottom:1px solid #e1e4df; }
+.window-toolbar span:first-child { color:#536a7c; }
+.welcome-app { display:grid; grid-template-columns:1.04fr 1fr; min-height:505px; }
+.welcome-copy { padding:49px clamp(26px,3.5vw,58px) 34px; }
+.os-eyebrow { font-size:9px; font-weight:600; letter-spacing:.13em; color:#667e8e; line-height:1.6; margin:0 0 26px; }
+.welcome-copy h1 { font-size:clamp(62px,6.8vw,104px); font-weight:500; letter-spacing:-.07em; line-height:.99; margin:0 0 24px; color:#173e67; }
+.welcome-copy h1>span,.token-app h1>span { color:#729bb6; }
+.welcome-description { font-size:17px; color:#617586; line-height:1.55; margin-bottom:27px; }
+.welcome-actions { display:flex; flex-wrap:wrap; align-items:center; gap:12px 19px; }
+.os-primary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:13px 20px; border:1px solid #173f6b; border-radius:4px; background:#174878; box-shadow:inset 0 1px #ffffff1a; color:white; font-size:11px; font-weight:600; }
+.os-primary:hover { background:#0f365e; }
+.os-text-button { min-height:44px; border:0; padding:10px 0; background:transparent; font-size:11px; color:#4c667c; text-decoration:underline; text-underline-offset:4px; }
+.system-caption { margin-top:39px; padding-top:23px; border-top:1px solid #dce3e4; display:flex; align-items:flex-start; gap:10px; }
+.system-caption>.status-dot { margin-top:4px; flex-shrink:0; }
+.system-caption strong { display:block; font-size:10px; font-weight:500; margin-bottom:6px; }
+.system-caption div>span { font-size:9px; color:#8a969d; display:block; line-height:1.5; }
+.ceo-portrait { position:relative; min-height:430px; background:#a9cce5; margin:18px 18px 18px 0; border-radius:3px; overflow:hidden; }
+.ceo-portrait>img { object-fit:cover; object-position:50% 50%; }
+.ceo-portrait::after { content:""; position:absolute; inset:50% 0 0; background:linear-gradient(transparent,#12365399); pointer-events:none; }
+.portrait-badge { position:absolute; top:18px; right:18px; padding:8px 10px; background:#f4f8fae6; border:1px solid #fff9; border-radius:3px; font-size:8px; letter-spacing:.07em; color:#526f80; display:flex; align-items:center; gap:6px; }
+.portrait-badge i { width:5px; height:5px; background:#d5aa61; border-radius:50%; }
+.portrait-caption { position:absolute; z-index:1; bottom:27px; left:27px; color:#fff; }
+.portrait-caption span { display:block; font-size:10px; opacity:.8; margin-bottom:8px; }
+.portrait-caption strong { font-size:21px; font-weight:500; letter-spacing:-.4px; }
+.window-status { height:32px; padding:0 19px; border-top:1px solid #dfe6e8; background:#f0f3f2; display:flex; align-items:center; justify-content:space-between; gap:15px; font-size:8px; color:#83929c; letter-spacing:.02em; }
+.window-status span:first-child { display:flex; align-items:center; gap:6px; }
+.window-status i { width:4px; height:4px; }
+.desktop-notice { display:flex; gap:13px; position:absolute; z-index:3; right:3%; bottom:15px; width:310px; padding:17px; border-radius:6px; background:#f6fafcf2; box-shadow:0 5px 22px #1b51882e; border:1px solid #ffffff; }
+.notice-icon { width:24px; height:24px; flex-shrink:0; color:#598679; }
+.desktop-notice strong,.desktop-notice div>span { display:block; font-size:11px; }
+.desktop-notice div>span { font-size:10px; margin:6px 0 7px; color:#8a969c; }
+.desktop-notice div>button { background:transparent; padding:0; border:0; min-height:26px; font-size:10px; color:#2d638d; text-decoration:underline; text-underline-offset:3px; }
+.notice-close { position:absolute; right:5px; top:5px; width:26px; height:26px; color:#7c8c98; border:0; background:transparent; }
+.desktop-disclaimer { position:relative; padding:10px 24px 18px; color:#e5f0f8; font-size:9px; text-align:center; }
+.os-taskbar { position:sticky; bottom:0; z-index:5; height:57px; min-height:57px; display:flex; align-items:center; gap:13px; padding:0 19px; background:linear-gradient(#f5fafced,#dceaf6f5); border-top:1px solid #fff; box-shadow:0 -3px 20px #37689117; }
+.start-area { height:100%; display:flex; align-items:center; }
+.start-button { display:flex; align-items:center; gap:10px; padding:0 16px; height:40px; background:transparent; border:1px solid transparent; border-radius:4px; font-weight:600; color:#204c74; font-size:13px; }
+.start-button .sloth-mark { width:19px; height:19px; gap:2px; }
+.start-button:hover,.start-button.is-open { background:#cddfeb; border-color:#b4cedf; }
+.taskbar-divider { width:1px; height:27px; background:#c2d3df; }
+.taskbar-app { display:flex; align-items:center; gap:9px; min-width:146px; height:40px; padding:0 14px; background:transparent; border:1px solid transparent; border-radius:4px; font-size:11px; color:#546e83; position:relative; }
+.taskbar-app svg { width:20px; height:20px; }
+.taskbar-app.is-active { background:#ffffffa8; border-color:#c7dbe9; }
+.taskbar-app.is-active::after { content:""; position:absolute; bottom:0; left:30%; right:30%; height:2px; background:#4d85b1; }
+.taskbar-tray { margin-left:auto; display:flex; align-items:center; gap:23px; font-size:10px; color:#5f7a8e; }
+.tray-status { display:flex; align-items:center; gap:7px; }
+.start-launcher { position:absolute; bottom:64px; left:17px; width:280px; background:#f4f8fa; border:1px solid #fff; padding:20px 12px 10px; border-radius:7px; box-shadow:0 10px 40px #163c6555; }
+.launcher-label { display:block; padding:0 10px 13px; font-size:9px; letter-spacing:.1em; color:#7d93a3; }
+.start-launcher button { display:flex; align-items:center; gap:15px; width:100%; text-align:left; background:none; border:0; border-radius:3px; padding:12px; font-size:13px; }
+.start-launcher button:hover { background:#dceaf4; }
+.start-launcher svg { width:23px; height:23px; }
+.start-launcher p { margin:15px 10px 7px; padding-top:14px; border-top:1px solid #d9e4eb; color:#7f93a3; font-size:10px; }
+.document-app { padding:40px clamp(25px,6vw,95px); max-width:980px; margin:auto; }
+.document-app h1,.utility-app h1 { font-size:clamp(38px,4.5vw,66px); font-weight:500; letter-spacing:-.055em; line-height:1.06; margin-bottom:22px; color:#183e64; }
+.document-lead { font-size:19px; line-height:1.5; color:#5d778d; }
+.merger-body { display:grid; grid-template-columns:1fr 1fr; gap:30px; font-size:13px; line-height:1.8; color:#697e8d; margin-top:30px; }
+.memo-terms { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; border-top:1px solid #d6dfe3; padding-top:22px; }
+.memo-terms span { display:block; font-size:8px; letter-spacing:.06em; color:#7a8e9c; margin-bottom:9px; }
+.memo-terms strong { font-size:12px; font-weight:500; }
+.memo-signature { margin:30px 0 0; font-size:14px; font-family:Georgia,serif; font-style:italic; }
+.memo-signature span { font-family:Arial,sans-serif; font-size:9px; font-style:normal; color:#7f939f; display:block; margin-top:8px; }
+.utility-app { text-align:center; padding:38px 25px 42px; max-width:620px; margin:auto; min-height:505px; }
+.utility-icon { display:block; width:40px; height:40px; padding:6px; margin:0 auto 16px; color:#668f9e; }
+.utility-app .os-eyebrow { margin-bottom:17px; }
+.utility-app>p:not(.os-eyebrow) { font-size:13px; line-height:1.6; color:#7b8d9b; }
+.update-progress { margin:30px auto 13px; text-align:left; width:100%; max-width:390px; }
+.update-progress>div { display:flex; justify-content:space-between; font-size:10px; margin-bottom:10px; color:#688294; }
+.update-progress progress { width:100%; height:9px; display:block; appearance:none; border:0; border-radius:2px; overflow:hidden; background:#e0e6e9; }
+.update-progress progress::-webkit-progress-bar { background:#e0e6e9; }
+.update-progress progress::-webkit-progress-value { background:#638eaa; transition:width .7s; }
+.update-progress progress::-moz-progress-bar { background:#638eaa; }
+.utility-app>.update-estimate { font-size:10px!important; margin-bottom:23px; }
+.utility-app>small { display:block; margin-top:20px; font-size:9px; line-height:1.6; color:#93a1aa; }
+.token-details { margin:28px auto; max-width:380px; text-align:left; }
+.token-details>div { display:flex; justify-content:space-between; gap:20px; padding:12px 0; border-bottom:1px solid #dfe5e7; font-size:11px; }
+.token-details dt { color:#8394a0; }
+.token-details dd { margin:0; }
+.desktop-empty { position:relative; z-index:1; text-align:center; color:#fff; padding:110px 20px; }
+.desktop-empty h1 { font-size:70px; letter-spacing:-4px; font-weight:500; margin-bottom:15px; }
+.desktop-empty p { font-size:15px; margin-bottom:25px; }
+@media(min-width:1500px) { .desktop-workspace { padding-top:60px; } .welcome-app { min-height:570px; } .welcome-copy { padding-top:70px; } }
+@media(max-width:1050px) { .connection { display:none; } .desktop-workspace { padding:30px 25px 120px 120px; } .desktop-shortcuts { left:13px; } .welcome-copy { padding:35px 28px; } .welcome-copy h1 { font-size:72px; } .welcome-app { grid-template-columns:1fr 1fr; } .welcome-actions { gap:4px; } .system-caption { margin-top:24px; } .os-edition span { display:none; } }
+@media(max-width:760px) { .os-header { height:65px; padding:0 20px; } .sloth-brand { font-size:22px; } .brand-inc { display:none; } .os-edition { font-size:9px; } .desktop-workspace { padding:105px 14px 27px; min-height:0; } .desktop-shortcuts { top:12px; left:14px; right:14px; width:auto; display:flex; justify-content:space-around; gap:5px; } .desktop-shortcuts button { width:78px; font-size:9px; gap:6px; padding:6px 3px; } .desktop-app-icon { width:35px; height:35px; padding:6px; border-radius:7px; } .welcome-app { grid-template-columns:1fr; } .welcome-copy { padding:32px 27px 23px; } .welcome-copy h1 { font-size:75px; } .os-eyebrow { font-size:8px; margin-bottom:21px; } .welcome-description { font-size:15px; margin-bottom:20px; } .welcome-actions { gap:16px; } .system-caption { margin-top:24px; padding-top:17px; } .ceo-portrait { margin:0 13px 13px; min-height:315px; aspect-ratio:1.15; } .window-toolbar { padding:11px 14px; font-size:9px; } .window-toolbar span:last-child { display:none; } .window-titlebar { padding-left:11px; } .window-controls button { width:37px; padding:12px; } .window-status { font-size:7px; padding:0 12px; } .desktop-notice { position:relative; right:auto; bottom:auto; margin:18px 0 0 auto; width:min(310px,100%); } .desktop-disclaimer { font-size:8px; padding:10px 30px 18px; line-height:1.6; } .os-taskbar { padding:0 8px; gap:6px; height:55px; min-height:55px; } .start-button { padding:0 9px; } .taskbar-app { min-width:0; padding:0 10px; } .taskbar-tray { font-size:9px; gap:0; } .taskbar-tray>span:last-child { display:none; } .document-app { padding:30px 25px; } .document-app h1,.utility-app h1 { font-size:46px; } .document-lead { font-size:16px; } .merger-body { grid-template-columns:1fr; gap:0; font-size:12px; margin-top:20px; } .memo-terms { grid-template-columns:1fr; gap:18px; } .utility-app { min-height:480px; padding:30px 23px; } .utility-app h1 { font-size:44px; } .token-details>div { font-size:10px; gap:10px; } .start-launcher { left:8px; width:270px; } }
+@media(prefers-reduced-motion:reduce) { .sloth-desktop * { transition:none!important; } }

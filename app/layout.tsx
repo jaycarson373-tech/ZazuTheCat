@@ -1,33 +1,33 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./tesllama.css";
+import "./microsloth.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "https://zazu-still-staring.vercel.app",
   ),
-  title: "TESLLAMA | Community Vehicle Concepts",
-  description: "Explore the TESLLAMA model range, community lore, and the project paired with Tesla (TSLA) on Stonk.",
+  title: "MicroSloth | Almost ready.",
+  description: "Welcome to SlothOS. Explore a fictional Microsoft–sloth merger, meet the Chief Executive Sloth, and install an update. Eventually.",
   icons: {
-    icon: "/tesla-logo.jpg",
-    shortcut: "/tesla-logo.jpg",
-    apple: "/tesla-logo.jpg",
+    icon: "/microsloth-icon.svg",
+    shortcut: "/microsloth-icon.svg",
+    apple: "/microsloth-ceo.jpg",
   },
   openGraph: {
-    title: "TESLLAMA | Community Vehicle Concepts",
-    description: "Explore the TESLLAMA model range and community lore.",
+    title: "MicroSloth | Almost ready.",
+    description: "The next era of productivity. We’ll get to it.",
     type: "website",
-    siteName: "TESLLAMA",
+    siteName: "MicroSloth",
     images: [{ url: "/og.png", width: 1731, height: 909, alt: "$ZAZU, the internet's most locked-in cat" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "TESLLAMA | Community Vehicle Concepts",
-    description: "Explore the TESLLAMA model range and community lore.",
+    title: "MicroSloth | Almost ready.",
+    description: "The next era of productivity. We’ll get to it.",
     images: ["/og.png"],
   },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en" data-scroll-behavior="smooth"><body>{children}</body></html>;
 }
