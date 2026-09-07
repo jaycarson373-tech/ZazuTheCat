@@ -471,3 +471,20 @@ h1, h2, h3, p { margin-top: 0; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .cursor-glow { display: none; }
 }
+
+/* Tesla landing page */
+.tesla-site{--red:#ff293e;min-height:100svh;background:#050505;color:#fff;font-family:Arial,Helvetica,sans-serif;padding:0 6%;overflow:clip}
+.tesla-site *{box-sizing:border-box}.tesla-site a{text-decoration:none;color:inherit}
+.tesla-header{max-width:1320px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-bottom:1px solid #252525}
+.tesla-brand{display:flex;align-items:center;gap:14px;font-size:20px;font-weight:800;letter-spacing:.16em}.tesla-brand img{border-radius:50%;object-fit:cover;border:1px solid #703038}
+.tesla-nav-link{font-size:14px;padding:12px 20px;border:1px solid #444;border-radius:999px;transition:border-color .2s}.tesla-nav-link:hover{border-color:var(--red)}
+.tesla-hero{max-width:1320px;margin:0 auto;text-align:center}.tesla-banner{margin:32px 0 0;overflow:hidden;border-radius:12px;background:#090909}.tesla-banner img{display:block;width:100%;height:auto}
+.tesla-intro{padding:36px 0 64px}.tesla-status{display:flex;align-items:center;justify-content:center;gap:9px;color:#ff7784;font-size:12px;font-weight:700;letter-spacing:.18em;margin:0 0 16px}.tesla-status>span{width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 12px #ff293e}
+.tesla-intro h1{font-size:clamp(56px,8vw,108px);line-height:1;font-weight:800;letter-spacing:.075em;margin:0 0 18px;color:#fff}.tesla-tagline{font-size:clamp(18px,2vw,24px);line-height:1.5;color:#c9c9ce;margin:0 0 18px}
+.tesla-pair{display:flex;justify-content:center;align-items:center;gap:7px;font-size:16px;color:#aaa;margin:0 0 28px}.tesla-pair strong{color:#fff;font-weight:500}.tesla-pair>span{font-size:12px;letter-spacing:.06em;color:#ff8390;background:#301015;padding:5px 8px;border-radius:4px;margin-left:5px}
+.tesla-site .tesla-cta{display:inline-flex;align-items:center;justify-content:center;gap:44px;background:var(--red);color:#fff;border:1px solid #ff5b6c;border-radius:6px;padding:17px 26px;font-size:16px;font-weight:700;box-shadow:0 4px 30px #ff293e25;transition:background .2s,transform .2s}.tesla-cta:hover{background:#db1730;transform:translateY(-2px)}.tesla-site a:focus-visible{outline:3px solid #fff;outline-offset:5px}
+.tesla-footer{max-width:1320px;margin:auto;border-top:1px solid #252525;padding:24px 0 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;color:#86868e;font-size:12px}.tesla-footer>span{font-weight:800;letter-spacing:.15em;color:#ddd;font-size:14px}.tesla-footer p{margin:0;line-height:1.6}.tesla-footer a{font-size:14px}
+@media(max-width:600px){.tesla-site{padding:0 5%}.tesla-header{padding:18px 0}.tesla-brand{font-size:16px;gap:10px}.tesla-brand img{width:40px;height:40px}.tesla-nav-link{padding:10px 16px}.tesla-banner{margin-top:24px;border-radius:6px}.tesla-intro{padding:38px 0 48px}.tesla-footer{flex-wrap:wrap;gap:16px}.tesla-footer p{order:3;width:100%}.tesla-footer a{margin-left:auto}}
+@media(prefers-reduced-motion:reduce){.tesla-site *{transition:none!important;scroll-behavior:auto!important}}
+
+body:has(.tesla-site){background:#050505}body:has(.tesla-site)::before{display:none}.tesla-site ::selection{background:#ff293e;color:#fff}
