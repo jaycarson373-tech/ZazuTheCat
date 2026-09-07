@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 
+const excuses = ["Mercury is in retrograde.", "My Pilates class ran over.", "The Starbucks queue was a spiritual test.", "My birth chart said no.", "I needed to recover from my rest day."];
+
 export function FoidButton() {
-  const [count, setCount] = useState(0);
-  const captions = ["Go on. Say it out loud.", "FOID. There it is.", "FOID. Again, apparently.", "This is your vocabulary now."];
-  return <div className="foid-say"><button className="foid-button foid-button-dark" onClick={() => setCount(value => value + 1)}>Say it again</button><p role="status" aria-live="polite">{captions[Math.min(count, captions.length - 1)]}{count > 0 ? <span> Your clicks: {count}</span> : null}</p></div>;
+  const [index, setIndex] = useState(0);
+  return <div className="foid-excuse-generator"><span>OFFICIAL EXCUSE GENERATOR</span><p role="status" aria-live="polite">“{excuses[index]}”</p><button className="foid-button foid-button-dark" onClick={() => setIndex(value => (value + 1) % excuses.length)}>Get another excuse</button><small>For entertainment. Obviously.</small></div>;
 }
