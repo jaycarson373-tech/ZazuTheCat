@@ -1,29 +1,29 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./microsloth.css";
+import "./foid.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "https://zazu-still-staring.vercel.app",
   ),
-  title: "MicroSloth | Almost ready.",
-  description: "Welcome to SlothOS. Explore a fictional Microsoft–sloth merger, meet the Chief Executive Sloth, and install an update. Eventually.",
+  title: "FOID | Four letters. A whole lot of brainrot.",
+  description: "Meet FOID, a fictional internet meme character. Explore the proposed LULU pairing on Stonk and the upcoming airdrop concept.",
   icons: {
-    icon: "/microsloth-icon.svg",
-    shortcut: "/microsloth-icon.svg",
-    apple: "/microsloth-ceo.jpg",
+    icon: "/foid-icon.svg",
+    shortcut: "/foid-icon.svg",
+    apple: "/foid-character.jpg",
   },
   openGraph: {
-    title: "MicroSloth | Almost ready.",
-    description: "The next era of productivity. We’ll get to it.",
+    title: "FOID | Four letters. A whole lot of brainrot.",
+    description: "Internet culture meets stock culture. A fictional meme character and a proposed LULU pairing.",
     type: "website",
-    siteName: "MicroSloth",
+    siteName: "FOID",
     images: [{ url: "/og.png", width: 1731, height: 909, alt: "$ZAZU, the internet's most locked-in cat" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MicroSloth | Almost ready.",
-    description: "The next era of productivity. We’ll get to it.",
+    title: "FOID | Four letters. A whole lot of brainrot.",
+    description: "Internet culture meets stock culture. A fictional meme character and a proposed LULU pairing.",
     images: ["/og.png"],
   },
 };
