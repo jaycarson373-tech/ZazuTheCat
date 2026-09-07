@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { ContractAddress } from "@/components/ContractAddress";
 
 export function SiteMenu({ stonkUrl }: { stonkUrl: string }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -38,6 +39,7 @@ export function SiteMenu({ stonkUrl }: { stonkUrl: string }) {
             <a href="https://x.com/Tesllama" target="_blank" rel="noopener noreferrer">Follow on X</a>
           </div>
           <p>Paired with Tesla (TSLA).</p>
+          <ContractAddress />
         </div>
       </div>
     </dialog>

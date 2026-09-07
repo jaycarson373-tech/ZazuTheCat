@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ModelCarousel } from "@/components/ModelCarousel";
 import { SiteMenu } from "@/components/SiteMenu";
-
-const stonkUrl = process.env.NEXT_PUBLIC_STONK_URL || "https://www.stonkfun.xyz";
+import { ContractAddress } from "@/components/ContractAddress";
+import { TESLLAMA_STONK_URL as stonkUrl } from "@/lib/tesllama-token";
 
 export default function Home() {
   return (
@@ -55,6 +55,7 @@ export default function Home() {
           <a href="https://x.com/Tesllama" target="_blank" rel="noopener noreferrer">Follow on X</a>
           <a href="#top">Back to top</a>
         </nav>
+        <div className="footer-contract"><ContractAddress /></div>
       </footer>
     </main>
   );
