@@ -21,6 +21,16 @@ export default function Home() {
           <a className="tesla-cta" href={stonkUrl} target="_blank" rel="noopener noreferrer">View on Stonk</a>
         </div>
       </section>
+      <section className="tesla-lore" aria-labelledby="lore-title">
+        <div>
+          <p className="tesla-status">COMMUNITY LORE</p>
+          <h2 id="lore-title">The Tesllama origin</h2>
+        </div>
+        <div className="tesla-lore-copy">
+          <p>In the community&apos;s fictional origin story, Elon Musk meets the leader of the llamas. The discussion ends with one agreement: unite Tesla engineering with llama identity.</p>
+          <p>The result is Tesllama. A merger in the lore, brought to life in the artwork.</p>
+        </div>
+      </section>
       <footer className="tesla-footer"><span>TESLA</span><p>A community meme coin. Not affiliated with Tesla, Inc.</p><a href="#top">Back to top</a></footer>
     </main>
   );
