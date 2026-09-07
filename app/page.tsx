@@ -51,7 +51,10 @@ export default function Home() {
       <footer className="tesllama-footer">
         <strong>TESLLAMA</strong>
         <p>A community meme project. Not affiliated with Tesla, Inc. or Elon Musk.</p>
-        <a href="#top">Back to top</a>
+        <nav className="tesllama-social-links" aria-label="Footer navigation">
+          <a href="https://x.com/Tesllama" target="_blank" rel="noopener noreferrer">Follow on X</a>
+          <a href="#top">Back to top</a>
+        </nav>
       </footer>
     </main>
   );

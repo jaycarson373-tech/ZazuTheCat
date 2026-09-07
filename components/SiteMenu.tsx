@@ -32,7 +32,13 @@ export function SiteMenu({ stonkUrl }: { stonkUrl: string }) {
           <Link href="/shop" onClick={closeMenu}><span>02</span>Shop Tesllamas</Link>
           <Link href="/#lore" onClick={closeMenu}><span>03</span>The story</Link>
         </nav>
-        <div className="menu-bottom"><a href={stonkUrl} target="_blank" rel="noopener noreferrer">TESLLAMA on Stonk</a><p>Paired with Tesla (TSLA).</p></div>
+        <div className="menu-bottom">
+          <div className="tesllama-social-links">
+            <a href={stonkUrl} target="_blank" rel="noopener noreferrer">TESLLAMA on Stonk</a>
+            <a href="https://x.com/Tesllama" target="_blank" rel="noopener noreferrer">Follow on X</a>
+          </div>
+          <p>Paired with Tesla (TSLA).</p>
+        </div>
       </div>
     </dialog>
   </>;
